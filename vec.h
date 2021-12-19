@@ -18,6 +18,7 @@ typedef struct s_vec
 ssize_t	vec_new(t_vec *src, size_t len, size_t elem_size);
 void	vec_free(t_vec *src);
 ssize_t	vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+ssize_t vec_resize(t_vec *src, size_t target_size);
 ssize_t vec_push(t_vec *src, void *elem);
 ssize_t vec_pop(void *dst, t_vec *src);
 ssize_t vec_copy(t_vec *dst, t_vec *src);
