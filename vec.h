@@ -6,6 +6,7 @@
 #include "unistd.h"
 #include "string.h"
 #include "stdbool.h"
+#include "stddef.h"
 
 typedef struct s_vec
 {
@@ -18,7 +19,7 @@ typedef struct s_vec
 ssize_t	vec_new(t_vec *src, size_t len, size_t elem_size);
 void	vec_free(t_vec *src);
 ssize_t	vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
-ssize_t vec_resize(t_vec *src, size_t target_size);
+ssize_t	vec_resize(t_vec *src, size_t target_size);
 ssize_t vec_push(t_vec *src, void *elem);
 ssize_t vec_pop(void *dst, t_vec *src);
 ssize_t vec_copy(t_vec *dst, t_vec *src);
@@ -31,5 +32,6 @@ void	vec_iter(t_vec *src, void (*f) (void *));
 void	vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
 void	vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
 void 	vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+void	vec_sort(t_vec *src, int (*f)(void *, void *));
 
 #endif

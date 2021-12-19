@@ -506,3 +506,32 @@ int main(void)
 }
 
 ```
+
+## Ex16: vec_sort
+
+Create a function `vec_sort` which takes in a function `f` determining
+order and equality of the two elements passed as parameters and thus
+sorting the array accordingly from the smallest to the largest element.
+
+```c
+
+void    vec_sort(t_vec *src, int (*f)(void *, void *));
+
+ssize_t cmp(void *a, void *b)
+{
+	return ((ssize_t)*(int *)a - *(int *)b);
+}
+
+int main(void)
+{
+	t_vec	t1;
+	int		base[] = {3, 2, 2, 7, 4};
+	int		expect[] = {2, 2, 3, 4, 7};
+
+	assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+	vec_sort(&t1, cmp);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	printf("test_vec_sort successful!\n");
+}
+
+```

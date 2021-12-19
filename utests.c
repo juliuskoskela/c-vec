@@ -263,6 +263,24 @@ void test_vec_reduce()
 	printf("test_vec_reduce successful!\n");
 }
 
+int compare(void *a, void *b)
+{
+	return (*(int *)a - *(int *)b);
+}
+
+void test_vec_sort()
+{
+	t_vec	t1;
+	int		base[] = {3, 2, 2, 7, 4, 2, 45, 3, -8, -5};
+	int		expect[] = {-8, -5, 2, 2, 2, 3, 3, 4, 7, 45};
+
+	assert(vec_from(&t1, base, 10, sizeof(int)) > 0);
+	vec_sort(&t1, compare);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	printf("test_vec_sort successful!\n");
+	vec_free(&t1);
+}
+
 int main(void)
 {
 	test_vec_new();
@@ -281,4 +299,5 @@ int main(void)
 	test_vec_map();
 	test_vec_filter();
 	test_vec_reduce();
+	test_vec_sort();
 }

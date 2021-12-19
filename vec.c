@@ -278,3 +278,61 @@ void vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *))
 		i++;
 	}
 }
+
+static void memswap8(uint8_t *a, uint8_t *b)
+{
+	if (a == b)
+		return ;
+	*a ^= *b;
+	*b ^= *a;
+	*a ^= *b;
+}
+
+static void memswap(uint8_t *a, uint8_t *b, size_t bytes)
+{
+	size_t	i;
+
+	if (!a || !b)
+		return ;
+	i = 0;
+	while (i < bytes)
+	{
+		memswap8(&a[i], &b[i]);
+		i++;
+	}
+}
+
+static void vec_sort_recurse(t_vec *src,
+    ssize_t low,
+    ssize_t high,
+    int (*f)(void *, void *))
+{
+    ssize_t pivot;
+    ssize_t a;
+    ssize_t b;
+
+    if (low >= high)
+        return ;
+    pivot = low;
+    a = low;
+    b = high;
+    while (a < b)
+    {
+        while (a <= high && f(vec_get(src, a), vec_get(src, pivot)) <= 0)
+            a++;
+        while (b >= low && f(vec_get(src, b), vec_get(src, pivot)) > 0)
+            b--;
+        if (a < b)
+            memswap(vec_get(src, a), vec_get(src, b), src->elem_size);
+    }
+    memswap(vec_get(src, pivot), vec_get(src, b), src->elem_size);
+    vec_sort_recurse(src, low, b - 1, f);
+    vec_sort_recurse(src, b + 1, high, f);
+}
+
+void    vec_sort(t_vec *src, int (*f)(void *, void *))
+{
+	if (!src)
+		return ;
+    vec_sort_recurse(src, 0, src->len - 1, f);
+}
