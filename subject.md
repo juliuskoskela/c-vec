@@ -1,91 +1,18 @@
-# Vec: A Dynamic Vector in C
+# Subject: Dynamic Vector
 
-The C-standard library doesn't offer a good dynamic data-structure often found
-in other languages such a a `vector` in C++ or a `Vec` in Rust. This is an
-overview of the idea, design and implementation of such data-structures in C.
+Let's create a dynamic vector data-structure in C.
 
-## Features of a Dynamic Data-Structure
+To understand more about what we are about to implement check out:
 
-When we talk about a dynamic data-structure, we usually mean a container with a
-growing memory buffer. Such buffer has a certain strategy to allocate more
-memory when the existing memory runs out. Usually the startegy is to double the
-size of the buffer each time a limit is reached. This way we minimize the number
-of reallocations in the buffer which is our most expensive operation. While we
-still have empty buffer left we can append to the buffer with negligible cost.
-When we reach the limit and reallocate, we incur the cost of the allocation and
-copying over the old buffer to the new buffer.
+https://doc.rust-lang.org/rust-by-example/std/vec.html
+https://www.cplusplus.com/reference/vector/vector/
 
-Such data-structures can be typed, but in this tutorial we will make our best to
-mimic the usefullness of vectors in other languages, by providing a
-generic interface which will accept any type of element.
+You can use the tests in `utests.c` to test your own implementation.
+Correct implementations (but not the only solutions!) can be found
+in vec.c. However it's better if you remove that and try yourself
+first!
 
-## Dynamic Vector
-
-Now let's implement a dynamic array data-structure. Let's consider the
-equivalent Rust called `Vec`. `Vec` implements tons of functions, but in essence
-it's a growable and shrinkable buffer of elements `<T>` and the main operations
-are `push` and `pop`. Pushing a new lement at the end of the buffer and
-"popping" aka. taking the element from the data-structure and giving it to you
-individually (this is an important detail actually). Furthermore we usually have
-`get` method or we can access the elements using `[]` syntax.
-
-It's important to note that there is a differnce in performance between the
-operations. Adding to the end of the array and deleting from the end will always
-be cheapest. Everything else will incur the penalty of copying data around.
-
-However in various tests I've made, those penalties are actually quite small
-compared to penalties that incur with different data-structures claiming to
-solve this problem. Sure you can prepend to a linked list witout removing or
-shuffling around elements, but in a dynamic array implementation you are dealing
-with data that is all laid out sequantially in memory. This is important,
-because modern processors are very fast when the requiared data can be found in
-cache. In a linked list or other pointer-type list, the cache misses that incur
-from pointer indirection far outweight any other gains in my experience.
-
-### Design
-
-First let's talk a little about design patterns. We should adopt conventions
-that make our API easy to reason with and practices that make the code safe and
-easy to debug.
-
-1. Allocation and deallocation happen at the same level as the variable
-   declaration.
-
-This first pattern aids at avoiding unnecessary allocations leading to increased
-performance as well as easier time with leaks. Let's see what it means.
-
-```c
-
-// This "constructor" returns an allocated pointer to a `t_foo`. But what if
-// well didn't need a pointer, because we use t_foo in the caller's scope only?
-t_foo *create_a_foo(int foosize);
-
-// We could just return a `t_foo`, but now the problem is the error condition.
-// You can't return a NULL if something goes wrong.
-t_foo create_a_foo(int foosize);
-
-// This is how we create a `t_foo` without allocating a pointer (if it wasn'tons
-// already allocated) and we can return an integer repesenting some error condition.
-int create_a_foo(t_foo *foo, int foosize);
-
-// ...or if we want to be passing foo around directly as a parameter to
-// another function, we can return a pointer to `t_foo`.
-t_foo *create_a_foo(t_foo *foo, int foosize);
-
-```
-
-2. Parameter order is (dst, src, params, fpointers).
-
-We always the destination before the source if a destination pointer or variable
-is applicable.
-
-```c
-
-int foo(char *dst, char *src, int len, (*bar)(char *));
-
-```
-
-### Struct
+## Struct
 
 We create a struct called `s_vec` and typedef it to `t_vec`.
 
@@ -106,7 +33,7 @@ When we access elements in the vector our bounds are 0 -> len. We might have
 allocated more memory in total, but we will only access memory in the byte-range
 0 -> len * elem_size.
 
-### Implementation
+## Implementation
 
 Here is our `vec.h` header file with implementation prototypes;
 
