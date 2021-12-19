@@ -129,19 +129,21 @@ typedef struct s_vec
     size_t  len;
 }   t_vec;
 
-ssize_t vec_new(t_vec *src, size_t len, size_t elem_size);
-void    vec_free(t_vec *src);
-ssize_t vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+ssize_t	vec_new(t_vec *src, size_t len, size_t elem_size);
+void	vec_free(t_vec *src);
+ssize_t	vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 ssize_t vec_push(t_vec *src, void *elem);
 ssize_t vec_pop(void *dst, t_vec *src);
 ssize_t vec_copy(t_vec *dst, t_vec *src);
-void    *vec_get(t_vec *src, size_t index);
-ssize_t vec_insert(t_vec *dst, void *elem, size_t index);
-ssize_t vec_remove(t_vec *src, size_t index);
-void    vec_iter(t_vec *src, void (*f) (void *));
-void    vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
-void    vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
-void    vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+void	*vec_get(t_vec *src, size_t index);
+ssize_t	vec_insert(t_vec *dst, void *elem, size_t index);
+ssize_t	vec_remove(t_vec *src, size_t index);
+ssize_t vec_append(t_vec *dst, t_vec *src);
+ssize_t vec_prepend(t_vec *dst, t_vec *src);
+void	vec_iter(t_vec *src, void (*f) (void *));
+void	vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
+void	vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
+void 	vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
 
 #endif
 
@@ -149,30 +151,10 @@ void    vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
 
 #### Construction and Destruction
 
-We create a function `vec_new` which will take an allocated pointer `dst` and
+Function `vec_new` will take an allocated pointer `dst` and
 allocate len * elem_size amount of bytes in the buffer.
 
-Allocation:
-
 ```c
-
-ssize_t vec_new(t_vec *dst, size_t init_alloc, size_t elem_size)
-{
-    if (!dst || elem_size == 0 || init_alloc == 0)
-        return (-1);
-    dst->alloc_size = init_alloc * elem_size;
-    dst->len = 0;
-    dst->elem_size = elem_size;
-    dst->memory = malloc(dst->alloc_size);
-    if (!dst->memory)
-    {
-        dst->alloc_size = 0;
-        dst->len = 0;
-        dst->elem_size = 0;
-        return (-1);
-    }
-    return ((ssize_t)dst->alloc_size);
-}
 
 int main(void)
 {
@@ -190,17 +172,6 @@ Deallocation:
 
 ```c
 
-void vec_free(t_vec *src)
-{
-    if (!src)
-        return ;
-    free(src->memory);
-    src->memory = NULL;
-    src->alloc_size = 0;
-    src->elem_size = 0;
-    src->len = 0;
-}
-
 int main(void)
 {
     t_vec   v;
@@ -217,18 +188,6 @@ int main(void)
 A handy `from` method that creates a vec out of any pointer.
 
 ```c
-
-ssize_t vec_from(t_vec *dst, void *src, size_t len, size_t elem_size)
-{
-    if (!src || !src || elem_size == 0)
-        return (-1);
-    dst->alloc_size = len * elem_size;
-    dst->len = len;
-    dst->elem_size = elem_size;
-    dst->memory = malloc(dst->alloc_size);
-    dst->memory = memcpy(dst->memory, src, dst->alloc_size);
-    return ((ssize_t)dst->alloc_size);
-}
 
 int main(void)
 {
@@ -255,20 +214,6 @@ available in the `dst` vector.
 
 ```c
 
-ssize_t vec_copy(t_vec *dst, t_vec *src)
-{
-    size_t  copy_size;
-
-    if (!dst || !src)
-        return (-1);
-    if (src->len * src->elem_size < dst->alloc_size)
-        copy_size = src->len * src->elem_size;
-    else
-        copy_size = src->alloc_size;
-    memcpy(dst->memory, src->memory, copy_size);
-    return ((ssize_t)dst->alloc_size);
-}
-
 int main(void)
 {
     int     vals[] = {1, 2, 3};
@@ -284,29 +229,14 @@ int main(void)
 
 ```
 
-The resizing function will take in a `target_size` parameter and either srink
+The resizing function `vec_resize` will take in a `target_size` parameter and either srink
 (destructively) or grow the vector to the target size copying the old contents
 over to the new alloaction.
 
 ```c
 
-static ssize_t vec_resize(t_vec *src, size_t target_size)
-{
-    t_vec   dst;
-    ssize_t ret;
+static ssize_t vec_resize(t_vec *src, size_t target_size);
 
-    if (!src)
-        return (-1);
-    ret = vec_new(&dst, target_size / src->elem_size, src->elem_size);
-    memcpy(dst.memory, src->memory, src->alloc_size);
-    dst.len = src->len;
-    if (ret < 0)
-        return (-1);
-    vec_copy(&dst, src);
-    vec_free(src);
-    *src = dst;
-    return ((ssize_t)src->alloc_size);
-}
 
 ```
 
@@ -318,49 +248,6 @@ to an element at any index in the vector. These are the least expensive
 operations to perform.
 
 ```c
-
-ssize_t vec_push(t_vec *dst, void *src)
-{
-    uint8_t *target;
-    ssize_t ret;
-
-    if (!dst || !src)
-        return (-1);
-    if ((dst->elem_size * dst-> len) + 1 > dst-> alloc_size)
-    {
-        ret = vec_resize(dst, dst->alloc_size * 2);
-        if (ret < 0)
-            return (-1);
-    }
-    target = &dst->memory[dst->elem_size * dst->len];
-    memcpy(target, src, dst->elem_size);
-    dst->len++;
-    return ((ssize_t)dst->alloc_size);
-}
-
-ssize_t vec_pop(void *dst, t_vec *src)
-{
-    uint8_t *target;
-
-    if (!dst || !src)
-        return (-1);
-    if (src == NULL || src->memory == NULL || src->len == 0)
-        return (-1);
-    target = &src->memory[src->elem_size * (src->len - 1)];
-    memcpy(dst, target, src->elem_size);
-    src->len--;
-    return ((ssize_t)src->len);
-}
-
-void *vec_get(t_vec *src, size_t index)
-{
-    uint8_t *ptr;
-
-    if (index > src->len || !src)
-        return (NULL);
-    ptr = &src->memory[src->elem_size * index];
-    return (ptr);
-}
 
 int main(void)
 {
@@ -384,49 +271,6 @@ index in the vector.
 
 ```c
 
-ssize_t vec_insert(t_vec *dst, void *src, size_t index)
-{
-    uint8_t *pos;
-    uint8_t *mov_pos;
-    ssize_t ret;
-
-    if (!dst || !src || index > dst->len)
-        return (-1);
-    if (index == dst->len)
-        return (vec_push(dst, src));
-    if ((dst->elem_size * dst-> len) + 1 > dst-> alloc_size)
-    {
-        ret = vec_resize(dst, dst->alloc_size * 2);
-        if (ret < 0)
-            return (-1);
-    }
-    pos = &dst->memory[dst->elem_size * index];
-    mov_pos = &dst->memory[dst->elem_size * (index + 1)];
-    memmove(mov_pos, pos, (dst->len - index) * dst->elem_size);
-    memcpy(pos, src, dst->elem_size);
-    dst->len++;
-    return ((ssize_t)dst->alloc_size);
-}
-
-ssize_t vec_remove(t_vec *src, size_t index)
-{
-    uint8_t *pos;
-    uint8_t *mov_pos;
-
-    if (!src || index > src->len)
-        return (-1);
-    if (index == src->len)
-    {
-        src->len--;
-        return ((ssize_t)src->alloc_size);
-    }
-    pos = &src->memory[src->elem_size * (index + 1)];
-    mov_pos = &src->memory[src->elem_size * index];
-    memmove(mov_pos, pos, (src->len - index) * src->elem_size);
-    src->len--;
-    return ((ssize_t)src->alloc_size);
-}
-
 int main(void)
 {
     int     vals[] = {1, 2, 3};
@@ -446,27 +290,11 @@ When we iterate our vector we usually use iterator functions. It's quite
 surprising how many use cases these few simple functions cover, reducing errors
 and code.
 
-First we create a simple iterator that takes in a function pointer which takes
+Simple iterator takes in a function pointer which takes
 in a pointer to an element in the loop. These are the actual elements in the
 vector so any modification will modify the original values.
 
 ```c
-
-void vec_iter(t_vec *src, void (*f) (void *))
-{
-    void    *ptr;
-    size_t  i;
-
-    if (!src)
-        return ;
-    i = 0;
-    while (i < src->len)
-    {
-        ptr = vec_get(src, i);
-        f(ptr);
-        i++;
-    }
-}
 
 void print_int(void *src)
 {
@@ -485,36 +313,8 @@ int main(void)
 
 ```
 
-Next we make a `map` function which copies over the current element (this operation is
+A `map` function which copies over the current element (this operation is
 non-destructive), sends the element to `f` and then appends it to a new vector `dst`.
-
-
-```c
-
-void vec_map(t_vec *dst, t_vec *src, void (*f) (void *))
-{
-    void    *ptr;
-    void    *res;
-    size_t  i;
-
-    if (!dst || !src)
-        return ;
-    res = malloc(dst->elem_size);
-    i = 0;
-    while (i < src->len)
-    {
-        ptr = vec_get(src, i);
-        memcpy(res, ptr, dst->elem_size);
-        f(res);
-        vec_push(dst, res);
-        i++;
-    }
-    free(res);
-}
-
-```
-
-Example:
 
 ```c
 
@@ -540,27 +340,6 @@ indicating if the element should be added to the resulting vector.
 
 ```c
 
-void vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *))
-{
-    void    *ptr;
-    void    *res;
-    size_t  i;
-
-    if (!dst || !src)
-        return ;
-    res = malloc(dst->elem_size);
-    i = 0;
-    while (i < src->len)
-    {
-        ptr = vec_get(src, i);
-        memcpy(res, ptr, dst->elem_size);
-        if (f(res) == true)
-            vec_push(dst, res);
-        i++;
-    }
-    free(res);
-}
-
 bool filter_even(void *src)
 {
     if (*(int *)src % 2 == 0)
@@ -580,28 +359,12 @@ void main()
 
 ```
 
-Finally we create a function that iterate's the vector and at each iteration
+Finally filtering function that iterates the vector and at each iteration
 function `f` get's the `dst` element passed to `vec_reduce` as the first
 parameter and the current element as the second parameter allowing reducing the
 results of the iteration to one element such as in summing a list of integers.
 
 ```c
-
-void vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *))
-{
-    void    *ptr;
-    size_t  i;
-
-    if (!dst || !src)
-        return ;
-    i = 0;
-    while (i < src->len)
-    {
-        ptr = vec_get(src, i);
-        f(dst, ptr);
-        i++;
-    }
-}
 
 void sum(void *dst, void *src)
 {
