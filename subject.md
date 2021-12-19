@@ -10,7 +10,7 @@ https://www.cplusplus.com/reference/vector/vector/
 
 You can use the tests in `utests.c` to test your own implementation.
 Correct implementations (but not the only solutions!) can be found
-in vec.c. However it's better if you remove that and try yourself
+in `vec.c`. However it's better if you remove that and try yourself
 first!
 
 ## Struct
