@@ -142,6 +142,40 @@ void test_vec_remove()
 	printf("test_vec_remove successful!\n");
 }
 
+void test_vec_append()
+{
+	t_vec	t1;
+	t_vec	t2;
+	int		base1[] = {1, 2, 3};
+	int		base2[] = {4, 5, 6};
+	int		expect[] = {1, 2, 3, 4, 5, 6};
+
+	assert(vec_from(&t1, base1, 3, sizeof(int)) > 0);
+	assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
+	assert(vec_append(&t1, &t2) > 0);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	vec_free(&t1);
+	vec_free(&t2);
+	printf("test_vec_append successful!\n");
+}
+
+void test_vec_prepend()
+{
+	t_vec	t1;
+	t_vec	t2;
+	int		base1[] = {1, 2, 3};
+	int		base2[] = {4, 5, 6};
+	int		expect[] = {4, 5, 6, 1, 2, 3};
+
+	assert(vec_from(&t1, base1, 3, sizeof(int)) > 0);
+	assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
+	assert(vec_prepend(&t1, &t2) > 0);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	vec_free(&t1);
+	vec_free(&t2);
+	printf("test_vec_prepend successful!\n");
+}
+
 void iter_tester(void *src)
 {
 	*(int *)src += 1;
@@ -233,6 +267,8 @@ int main(void)
 	test_vec_get();
 	test_vec_insert();
 	test_vec_remove();
+	test_vec_append();
+	test_vec_prepend();
 	test_vec_iter();
 	test_vec_map();
 	test_vec_filter();
