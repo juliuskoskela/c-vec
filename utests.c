@@ -8,7 +8,7 @@ void test_vec_new()
 
 	assert(vec_new(&t1, 0, 0) == -1);
 	assert(vec_new(&t1, 0, 1) == -1);
-	assert(vec_new(&t1, 0, 1) == -1);
+	assert(vec_new(&t1, 1, 0) == -1);
 	assert(vec_new(&t1, 10, 1) == 10);
 	vec_free(&t1);
 	printf("test_vec_new successful!\n");
