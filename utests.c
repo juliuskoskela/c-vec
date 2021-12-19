@@ -129,7 +129,6 @@ void test_vec_remove()
 	t_vec	t1;
 	int		base[] = {1, 2, 3, 4, 5};
 	int		insert[] = {42, 666, 7};
-	int		expect[] = {1, 42, 2, 3, 666, 4, 5, 7};
 
 	assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
 	vec_insert(&t1, &insert[0], 1);
