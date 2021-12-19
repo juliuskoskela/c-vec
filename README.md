@@ -1,12 +1,12 @@
 # Vec: A Dynamic Vector in C
 
-The C-standard library doesn't offer a good dynamic data-structure often found
-in other languages such a a `vector` in C++ or a `Vec` in Rust. This is an
-overview of the idea, design and implementation of such data-structures in C.
+The C-standard library doesn't offer a good dynamic data structure often found
+in other languages such `vector` in C++ or `Vec` in Rust. This is an
+overview of the idea, design and implementation of such data-structure in C.
 
 ## Features of a Dynamic Data-Structure
 
-When we talk about a dynamic data-structure, we usually mean a container with a
+When we talk about a dynamic data structure, we usually mean a container with a
 growing memory buffer. Such buffer has a certain strategy to allocate more
 memory when the existing memory runs out. Usually the startegy is to double the
 size of the buffer each time a limit is reached. This way we minimize the number
@@ -15,31 +15,31 @@ still have empty buffer left we can append to the buffer with negligible cost.
 When we reach the limit and reallocate, we incur the cost of the allocation and
 copying over the old buffer to the new buffer.
 
-Such data-structures can be typed, but in this tutorial we will make our best to
-mimic the usefullness of vectors in other languages, by providing a
+Such data structures can be typed, but in this tutorial we will make our best to
+mimic the usefullness of vectors in other languages by providing a
 generic interface which will accept any type of element.
 
 ## Dynamic Vector
 
-Now let's implement a dynamic array data-structure. Let's consider the
+Now let's implement a dynamic vector data structure. Let's consider the
 equivalent Rust called `Vec`. `Vec` implements tons of functions, but in essence
-it's a growable and shrinkable buffer of elements `<T>` and the main operations
-are `push` and `pop`. Pushing a new lement at the end of the buffer and
-"popping" aka. taking the element from the data-structure and giving it to you
-individually (this is an important detail actually). Furthermore we usually have
+it's a growable and shrinkable buffer of elements of type `<T>` and the main operations
+are `push` and `pop`. Pushing a new element to the end of the buffer and
+"popping" aka. taking the element from the end and giving it to you
+individually (this is an important detail). Furthermore we usually have
 `get` method or we can access the elements using `[]` syntax.
 
 It's important to note that there is a differnce in performance between the
 operations. Adding to the end of the array and deleting from the end will always
 be cheapest. Everything else will incur the penalty of copying data around.
 
-However in various tests I've made, those penalties are actually quite small
-compared to penalties that incur with different data-structures claiming to
+However in various tests I've made, those penalties have been quite small
+compared to penalties that incur with different data structures claiming to
 solve this problem. Sure you can prepend to a linked list witout removing or
-shuffling around elements, but in a dynamic array implementation you are dealing
+shuffling around elements, but in a dynamic vector you are dealing
 with data that is all laid out sequantially in memory. This is important,
-because modern processors are very fast when the requiared data can be found in
-cache. In a linked list or other pointer-type list, the cache misses that incur
+because modern processors are very fast when the required data can be found in
+cache. In a linked list or other pointer-type list, the cache misses
 from pointer indirection far outweight any other gains in my experience.
 
 ### Design
@@ -185,7 +185,7 @@ int main(void)
 
 ```
 
-A handy `from` method that creates a vec out of any pointer.
+A handy `from` method that creates a vec out data passed in as a pointer.
 
 ```c
 
