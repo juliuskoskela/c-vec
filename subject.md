@@ -5,6 +5,7 @@ Let's create a dynamic vector data-structure in C.
 To understand more about what we are about to implement check out:
 
 https://doc.rust-lang.org/rust-by-example/std/vec.html
+
 https://www.cplusplus.com/reference/vector/vector/
 
 You can use the tests in `utests.c` to test your own implementation.
