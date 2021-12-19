@@ -132,8 +132,8 @@ ssize_t vec_insert(t_vec *dst, void *src, size_t index)
 		if (ret < 0)
 			return (-1);
 	}
-	pos = &dst->memory[dst->elem_size * index];
-	mov_pos = &dst->memory[dst->elem_size * (index + 1)];
+	pos = vec_get(dst, index);
+	mov_pos = vec_get(dst, index + 1);
 	memmove(mov_pos, pos, (dst->len - index) * dst->elem_size);
 	memcpy(pos, src, dst->elem_size);
 	dst->len++;
@@ -152,11 +152,57 @@ ssize_t vec_remove(t_vec *src, size_t index)
 		src->len--;
 		return ((ssize_t)src->alloc_size);
 	}
-	pos = &src->memory[src->elem_size * (index + 1)];
-	mov_pos = &src->memory[src->elem_size * index];
+	pos = vec_get(src, index + 1);
+	mov_pos = vec_get(src, index);
 	memmove(mov_pos, pos, (src->len - index) * src->elem_size);
 	src->len--;
 	return ((ssize_t)src->alloc_size);
+}
+
+ssize_t vec_append(t_vec *dst, t_vec *src)
+{
+	uint8_t	*pos;
+	ssize_t	ret;
+	size_t	alloc_size;
+
+	if (!dst || !src)
+		return (-1);
+	alloc_size = dst->len * dst->elem_size + src->len * src->elem_size;
+	if (dst->alloc_size < alloc_size)
+	{
+		if (dst->alloc_size * 2 < dst->len * alloc_size)
+			ret = vec_resize(dst, alloc_size);
+		else
+			ret = vec_resize(dst, dst->alloc_size * 2);
+		if (ret < 0)
+			return (-1);
+	}
+	pos = vec_get(dst, dst->len);
+	memcpy(pos, src->memory, src->len * src->elem_size);
+	dst->len += src->len;
+	return ((ssize_t)dst->alloc_size);
+}
+
+ssize_t vec_prepend(t_vec *dst, t_vec *src)
+{
+	uint8_t	*pos;
+	ssize_t	ret;
+	t_vec	new;
+	size_t	alloc_size;
+
+	if (!dst || !src)
+		return (-1);
+	alloc_size = dst->len * dst->elem_size + src->len * src->elem_size;
+	ret = vec_new(&new, alloc_size / dst->elem_size, dst->elem_size);
+	if (ret < 0)
+		return (-1);
+	vec_copy(&new, src);
+	new.len = src->len + dst->len;
+	pos = vec_get(&new, src->len);
+	memcpy(pos, dst->memory, dst->len * dst->elem_size);
+	vec_free(dst);
+	*dst = new;
+	return ((ssize_t)dst->alloc_size);
 }
 
 void vec_iter(t_vec *src, void (*f) (void *))
