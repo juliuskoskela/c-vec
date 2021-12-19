@@ -55,7 +55,7 @@ ssize_t vec_copy(t_vec *dst, t_vec *src)
 	return ((ssize_t)dst->alloc_size);
 }
 
-static ssize_t vec_resize(t_vec *src, size_t target_size)
+ssize_t vec_resize(t_vec *src, size_t target_size)
 {
 	t_vec	dst;
 	ssize_t	ret;
