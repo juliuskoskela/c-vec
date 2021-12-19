@@ -53,6 +53,18 @@ void test_vec_copy()
 	printf("test_vec_copy successful!\n");
 }
 
+void test_vec_resize()
+{
+	t_vec	t1;
+	int		base[] = {1, 2, 3, 4, 5};
+
+	assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+	assert(vec_resize(&t1, 100) == 100);
+	assert(memcmp(t1.memory, base, sizeof(base)) == 0);
+	vec_free(&t1);
+	printf("test_vec_resize successful!\n");
+}
+
 void test_vec_push()
 {
 	t_vec	t1;
@@ -101,11 +113,6 @@ void test_vec_get()
 	assert(t1.len == 2);
 	vec_free(&t1);
 	printf("test_vec_get successful!\n");
-}
-
-void print_ints(void *ptr)
-{
-	printf("%d\n", *(int *)ptr);
 }
 
 void test_vec_insert()
@@ -262,6 +269,7 @@ int main(void)
 	test_vec_free();
 	test_vec_from();
 	test_vec_copy();
+	test_vec_resize();
 	test_vec_push();
 	test_vec_pop();
 	test_vec_get();
