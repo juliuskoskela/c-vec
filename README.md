@@ -1,5 +1,8 @@
 # Vec: A Dynamic Vector in C
 
+The `subject.md` file contains exercises for this implementation if you want to
+do it yourself. In that case, don't peek at the solutions in `vec.c` beforehand!
+
 The C-standard library doesn't offer a good dynamic data structure often found
 in other languages such `vector` in C++ or `Vec` in Rust. This is an
 overview of the idea, design and implementation of such data structure in C.
