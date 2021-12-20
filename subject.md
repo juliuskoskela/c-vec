@@ -21,7 +21,7 @@ We create a struct called `s_vec` and typedef it to `t_vec`.
 
 typedef struct s_vec
 {
-    uint8_t *memory;    // Pointer to the first byte of allocated memory.
+    unsigned char *memory;    // Pointer to the first byte of allocated memory.
     size_t  elem_size;  // Size of a vector element in bytes.
     size_t  alloc_size; // Total size of allocated bytes.
     size_t  len;        // Length of the used-up part of the vector in
@@ -44,34 +44,35 @@ Here is our `vec.h` header file with implementation prototypes;
 # define VEC_H
 
 #include "stdlib.h"
-#include "stdint.h"
 #include "unistd.h"
 #include "string.h"
 #include "stdbool.h"
 
 typedef struct s_vec
 {
-    uint8_t *memory;
-    size_t  elem_size;
-    size_t  alloc_size;
-    size_t  len;
-}   t_vec;
+	unsigned char	*memory;
+	size_t			elem_size;
+	size_t			alloc_size;
+	size_t			len;
+}	t_vec;
 
-ssize_t vec_new(t_vec *src, size_t len, size_t elem_size);
-void    vec_free(t_vec *src);
-ssize_t vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
-ssize_t vec_push(t_vec *src, void *elem);
-ssize_t vec_pop(void *dst, t_vec *src);
-ssize_t vec_copy(t_vec *dst, t_vec *src);
-void    *vec_get(t_vec *src, size_t index);
-ssize_t vec_insert(t_vec *dst, void *elem, size_t index);
-ssize_t vec_remove(t_vec *src, size_t index);
-ssize_t vec_append(t_vec *dst, t_vec *src);
-ssize_t vec_prepend(t_vec *dst, t_vec *src);
-void    vec_iter(t_vec *src, void (*f) (void *));
-void    vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
-void    vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
-void    vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+int		vec_new(t_vec *src, size_t len, size_t elem_size);
+void	vec_free(t_vec *src);
+int		vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int		vec_resize(t_vec *src, size_t target_size);
+int	 	vec_push(t_vec *src, void *elem);
+int	 	vec_pop(void *dst, t_vec *src);
+int	 	vec_copy(t_vec *dst, t_vec *src);
+void	*vec_get(t_vec *src, size_t index);
+int		vec_insert(t_vec *dst, void *elem, size_t index);
+int		vec_remove(t_vec *src, size_t index);
+int	 	vec_append(t_vec *dst, t_vec *src);
+int	 	vec_prepend(t_vec *dst, t_vec *src);
+void	vec_iter(t_vec *src, void (*f) (void *));
+int		vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
+int		vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
+int	 	vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+void	vec_sort(t_vec *src, int (*f)(void *, void *));
 
 #endif
 
@@ -85,7 +86,7 @@ initialize its length and element size.
 
 ```c
 
-ssize_t vec_new(t_vec *dst, size_t init_alloc, size_t elem_size);
+int vec_new(t_vec *dst, size_t init_alloc, size_t elem_size);
 
 int main(void)
 {
@@ -129,7 +130,7 @@ which then will be copied over to the new vector.
 
 ```c
 
-ssize_t vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 
 int main(void)
 {
@@ -150,7 +151,7 @@ will only copy at most as many bytes as are available in the `dst` vector.
 
 ```c
 
-ssize_t vec_copy(t_vec *dst, t_vec *src);
+int vec_copy(t_vec *dst, t_vec *src);
 
 int main(void)
 {
@@ -176,7 +177,7 @@ the old contents over to the new allocation.
 
 ```c
 
-static ssize_t vec_resize(t_vec *src, size_t target_size);
+static int vec_resize(t_vec *src, size_t target_size);
 
 int main(void)
 {
@@ -198,7 +199,7 @@ element to be pushed to the end of the vector.
 
 ```c
 
-ssize_t vec_push(t_vec *dst, void *src);
+int vec_push(t_vec *dst, void *src);
 
 int main(void)
 {
@@ -222,7 +223,7 @@ the vector and copy it to `dst`.
 
 ```c
 
-ssize_t vec_pop(void *dst, t_vec *src);
+int vec_pop(void *dst, t_vec *src);
 
 int main(void)
 {
@@ -279,7 +280,7 @@ any position in the vector without overwriting existing elements.
 
 ```c
 
-ssize_t vec_insert(t_vec *dst, void *src, size_t index);
+int vec_insert(t_vec *dst, void *src, size_t index);
 
 int main(void)
 {
@@ -305,7 +306,7 @@ any position in the vector without overwriting existing elements.
 
 ```c
 
-ssize_t vec_remove(t_vec *src, size_t index);
+int vec_remove(t_vec *src, size_t index);
 
 int main(void)
 {
@@ -333,7 +334,7 @@ Create a function `vec_append` which appends vector `src` to `dst`.
 
 ```c
 
-ssize_t vec_append(t_vec *dst, t_vec *src);
+int vec_append(t_vec *dst, t_vec *src);
 
 int main(void)
 {
@@ -360,7 +361,7 @@ Create a function `vec_prepend` which prepends vector `src` to `dst`.
 
 ```c
 
-ssize_t vec_prepend(t_vec *dst, t_vec *src);
+int vec_prepend(t_vec *dst, t_vec *src);
 
 int main(void)
 {
@@ -517,9 +518,9 @@ sorting the array accordingly from the smallest to the largest element.
 
 void    vec_sort(t_vec *src, int (*f)(void *, void *));
 
-ssize_t cmp(void *a, void *b)
+int cmp(void *a, void *b)
 {
-	return ((ssize_t)*(int *)a - *(int *)b);
+	return ((long)*(int *)a - *(int *)b);
 }
 
 int main(void)

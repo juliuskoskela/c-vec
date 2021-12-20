@@ -88,7 +88,7 @@ We create a struct called `s_vec` and typedef it to `t_vec`.
 
 typedef struct s_vec
 {
-    uint8_t *memory;    // Pointer to the first byte of allocated memory.
+    unsigned char *memory;    // Pointer to the first byte of allocated memory.
     size_t  elem_size;  // Size of a vector element in bytes.
     size_t  alloc_size; // Total size of allocated bytes.
     size_t  len;        // Length of the used-up part of the vector in
@@ -111,34 +111,35 @@ Here is our `vec.h` header file with implementation prototypes;
 # define VEC_H
 
 #include "stdlib.h"
-#include "stdint.h"
 #include "unistd.h"
 #include "string.h"
 #include "stdbool.h"
 
 typedef struct s_vec
 {
-    uint8_t *memory;
-    size_t  elem_size;
-    size_t  alloc_size;
-    size_t  len;
-}   t_vec;
+	unsigned char	*memory;
+	size_t			elem_size;
+	size_t			alloc_size;
+	size_t			len;
+}	t_vec;
 
-ssize_t vec_new(t_vec *src, size_t len, size_t elem_size);
-void    vec_free(t_vec *src);
-ssize_t vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
-ssize_t vec_push(t_vec *src, void *elem);
-ssize_t vec_pop(void *dst, t_vec *src);
-ssize_t vec_copy(t_vec *dst, t_vec *src);
-void    *vec_get(t_vec *src, size_t index);
-ssize_t vec_insert(t_vec *dst, void *elem, size_t index);
-ssize_t vec_remove(t_vec *src, size_t index);
-ssize_t vec_append(t_vec *dst, t_vec *src);
-ssize_t vec_prepend(t_vec *dst, t_vec *src);
-void    vec_iter(t_vec *src, void (*f) (void *));
-void    vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
-void    vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
-void    vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+int		vec_new(t_vec *src, size_t len, size_t elem_size);
+void	vec_free(t_vec *src);
+int		vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int		vec_resize(t_vec *src, size_t target_size);
+int	 	vec_push(t_vec *src, void *elem);
+int	 	vec_pop(void *dst, t_vec *src);
+int	 	vec_copy(t_vec *dst, t_vec *src);
+void	*vec_get(t_vec *src, size_t index);
+int		vec_insert(t_vec *dst, void *elem, size_t index);
+int		vec_remove(t_vec *src, size_t index);
+int	 	vec_append(t_vec *dst, t_vec *src);
+int	 	vec_prepend(t_vec *dst, t_vec *src);
+void	vec_iter(t_vec *src, void (*f) (void *));
+int		vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
+int		vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
+int	 	vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+void	vec_sort(t_vec *src, int (*f)(void *, void *));
 
 #endif
 
@@ -154,7 +155,7 @@ allocate len * elem_size amount of bytes in the buffer.
 int main(void)
 {
     t_vec   v;
-    ssize_t ret;
+    int ret;
 
     ret = vec_new(&v, 10, sizeof(int));
     if (ret < 0)
@@ -170,7 +171,7 @@ Deallocation:
 int main(void)
 {
     t_vec   v;
-    ssize_t ret;
+    int ret;
 
     ret = vec_new(&v, 10, sizeof(int));
     if (ret < 0)
@@ -188,7 +189,7 @@ int main(void)
 {
     int     vals[] = {1, 2, 3};
     t_vec   v;
-    ssize_t ret;
+    int ret;
 
     ret = vec_from(&v, vals, 3, sizeof(int));
     if (ret < 0)
@@ -230,7 +231,7 @@ over to the new alloaction.
 
 ```c
 
-static ssize_t vec_resize(t_vec *src, size_t target_size);
+static int vec_resize(t_vec *src, size_t target_size);
 
 
 ```
