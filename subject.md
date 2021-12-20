@@ -13,7 +13,29 @@ Correct implementations (but not the only solutions!) can be found
 in `vec.c`. However it's better if you remove that and try yourself
 first!
 
-## Struct
+## Rules
+
+1. You are only allowed to use the following external functions:
+	- malloc
+	- free
+	- memcpy
+	- memmove
+
+2. You are only allowed to use the includes in the header file described in
+"Implementation"
+
+3. You must use the prototypes described in each exercise without modification.
+
+4. You must compile your program with the following flags using either `gcc`
+or `clang` compilers:
+	- Wall
+	- Wextra
+	- Werror
+	- Wpedantic
+	- Wunreachable-code
+	- Wtype-limits
+
+## Implementation
 
 We create a struct called `s_vec` and typedef it to `t_vec`.
 
@@ -22,10 +44,10 @@ We create a struct called `s_vec` and typedef it to `t_vec`.
 typedef struct s_vec
 {
     unsigned char *memory;    // Pointer to the first byte of allocated memory.
-    size_t  elem_size;  // Size of a vector element in bytes.
-    size_t  alloc_size; // Total size of allocated bytes.
-    size_t  len;        // Length of the used-up part of the vector in
-                        // `elem_size` chunks.
+    size_t  elem_size;        // Size of a vector element in bytes.
+    size_t  alloc_size;       // Total size of allocated bytes.
+    size_t  len;              // Length of the used-up part of the vector in
+                              // `elem_size` chunks.
 }   t_vec;
 
 ```
@@ -33,8 +55,6 @@ typedef struct s_vec
 When we access elements in the vector our bounds are 0 -> len - 1. We might have
 allocated more memory in total, but we will only access memory in the byte-range
 0 -> len * elem_size.
-
-## Implementation
 
 Here is our `vec.h` header file with implementation prototypes;
 
