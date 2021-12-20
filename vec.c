@@ -1,6 +1,6 @@
 #include "vec.h"
 
-ssize_t vec_new(t_vec *dst, size_t init_alloc, size_t elem_size)
+int vec_new(t_vec *dst, size_t init_alloc, size_t elem_size)
 {
 	if (!dst || elem_size == 0 || init_alloc == 0)
 		return (-1);
@@ -29,7 +29,7 @@ void vec_free(t_vec *src)
 	src->len = 0;
 }
 
-ssize_t vec_from(t_vec *dst, void *src, size_t len, size_t elem_size)
+int vec_from(t_vec *dst, void *src, size_t len, size_t elem_size)
 {
 	if (!src || !src || elem_size == 0)
 		return (-1);
@@ -48,7 +48,7 @@ ssize_t vec_from(t_vec *dst, void *src, size_t len, size_t elem_size)
 	return (1);
 }
 
-ssize_t vec_copy(t_vec *dst, t_vec *src)
+int vec_copy(t_vec *dst, t_vec *src)
 {
 	size_t	copy_size;
 
@@ -62,10 +62,10 @@ ssize_t vec_copy(t_vec *dst, t_vec *src)
 	return (1);
 }
 
-ssize_t vec_resize(t_vec *src, size_t target_size)
+int vec_resize(t_vec *src, size_t target_size)
 {
 	t_vec	dst;
-	ssize_t	ret;
+	int	ret;
 
 	if (!src)
 		return (-1);
@@ -80,10 +80,10 @@ ssize_t vec_resize(t_vec *src, size_t target_size)
 	return (1);
 }
 
-ssize_t vec_push(t_vec *dst, void *src)
+int vec_push(t_vec *dst, void *src)
 {
 	uint8_t	*target;
-	ssize_t	ret;
+	int	ret;
 
 	if (!dst || !src)
 		return (-1);
@@ -99,7 +99,7 @@ ssize_t vec_push(t_vec *dst, void *src)
 	return (1);
 }
 
-ssize_t vec_pop(void *dst, t_vec *src)
+int vec_pop(void *dst, t_vec *src)
 {
 	uint8_t	*target;
 
@@ -123,11 +123,11 @@ void *vec_get(t_vec *src, size_t index)
 	return (ptr);
 }
 
-ssize_t vec_insert(t_vec *dst, void *src, size_t index)
+int vec_insert(t_vec *dst, void *src, size_t index)
 {
 	uint8_t	*pos;
 	uint8_t	*mov_pos;
-	ssize_t	ret;
+	int	ret;
 
 	if (!dst || !src || index > dst->len)
 		return (-1);
@@ -147,7 +147,7 @@ ssize_t vec_insert(t_vec *dst, void *src, size_t index)
 	return (1);
 }
 
-ssize_t vec_remove(t_vec *src, size_t index)
+int vec_remove(t_vec *src, size_t index)
 {
 	uint8_t	*pos;
 	uint8_t	*mov_pos;
@@ -166,10 +166,10 @@ ssize_t vec_remove(t_vec *src, size_t index)
 	return (1);
 }
 
-ssize_t vec_append(t_vec *dst, t_vec *src)
+int vec_append(t_vec *dst, t_vec *src)
 {
 	uint8_t	*pos;
-	ssize_t	ret;
+	int	ret;
 	size_t	alloc_size;
 
 	if (!dst || !src)
@@ -190,10 +190,10 @@ ssize_t vec_append(t_vec *dst, t_vec *src)
 	return (1);
 }
 
-ssize_t vec_prepend(t_vec *dst, t_vec *src)
+int vec_prepend(t_vec *dst, t_vec *src)
 {
 	uint8_t	*pos;
-	ssize_t	ret;
+	int	ret;
 	t_vec	new;
 	size_t	alloc_size;
 
@@ -228,7 +228,7 @@ void vec_iter(t_vec *src, void (*f) (void *))
 	}
 }
 
-ssize_t vec_map(t_vec *dst, t_vec *src, void (*f) (void *))
+int vec_map(t_vec *dst, t_vec *src, void (*f) (void *))
 {
 	void	*ptr;
 	void	*res;
@@ -252,7 +252,7 @@ ssize_t vec_map(t_vec *dst, t_vec *src, void (*f) (void *))
 	return (1);
 }
 
-ssize_t vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *))
+int vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *))
 {
 	void	*ptr;
 	void	*res;
@@ -276,7 +276,7 @@ ssize_t vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *))
 	return (1);
 }
 
-ssize_t vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *))
+int vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *))
 {
 	void	*ptr;
 	size_t	i;
