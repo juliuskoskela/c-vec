@@ -6,7 +6,7 @@ overview of the idea, design and implementation of such data structure in C.
 
 ## Features of a Dynamic Data Structure
 
-When we talk about a dynamic data structure, we usually mean a container with a
+When we talk about a dynamic data structures, we usually mean a container with a
 growing memory buffer. Such a buffer has a certain strategy to allocate more
 memory when the existing memory runs out. A typical strategy is to double the
 size of the buffer each time a limit is reached. This way we minimize the number
