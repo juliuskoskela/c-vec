@@ -2,70 +2,65 @@
 
 The C-standard library doesn't offer a good dynamic data structure often found
 in other languages such `vector` in C++ or `Vec` in Rust. This is an
-overview of the idea, design and implementation of such data-structure in C.
+overview of the idea, design and implementation of such data structure in C.
 
-## Features of a Dynamic Data-Structure
+## Features of a Dynamic Data Structure
 
 When we talk about a dynamic data structure, we usually mean a container with a
-growing memory buffer. Such buffer has a certain strategy to allocate more
-memory when the existing memory runs out. Usually the startegy is to double the
+growing memory buffer. Such a buffer has a certain strategy to allocate more
+memory when the existing memory runs out. A typical strategy is to double the
 size of the buffer each time a limit is reached. This way we minimize the number
 of reallocations in the buffer which is our most expensive operation. While we
-still have empty buffer left we can append to the buffer with negligible cost.
-When we reach the limit and reallocate, we incur the cost of the allocation and
-copying over the old buffer to the new buffer.
+still have space left in the buffer we can append to the buffer with negligible cost.
+When we reach the limit and reallocate, we incur the cost of the allocating the space for a new buffer and copying over the data from the old buffer.
 
 Such data structures can be typed, but in this tutorial we will make our best to
-mimic the usefullness of vectors in other languages by providing a
+mimic the usefulness of vectors in other languages by providing a
 generic interface which will accept any type of element.
 
 ## Dynamic Vector
 
 Now let's implement a dynamic vector data structure. Let's consider the
 equivalent Rust called `Vec`. `Vec` implements tons of functions, but in essence
-it's a growable and shrinkable buffer of elements of type `<T>` and the main operations
+it's a growable and shrinkable buffer of elements of type `<T>`, and the main operations
 are `push` and `pop`. Pushing a new element to the end of the buffer and
-"popping" aka. taking the element from the end and giving it to you
-individually (this is an important detail). Furthermore we usually have
-`get` method or we can access the elements using `[]` syntax.
+"popping" a.k.a. removing the element from the end and returning you a pointer to the element (this is an important detail). In addition, we implement the `insert` and `remove` operations that allow you to specify an index to which the element is added or which is removed. Furthermore, we usually have a `get` method, or we can access the elements by their index using the `[]` syntax.
 
-It's important to note that there is a differnce in performance between the
+It's important to note that there is a difference in performance between the
 operations. Adding to the end of the array and deleting from the end will always
-be cheapest. Everything else will incur the penalty of copying data around.
+be cheapest. Everything else, such as inserting an element at the beginning or in the middle of the array, will incur the penalty of copying data around.
 
-However in various tests I've made, those penalties have been quite small
-compared to penalties that incur with different data structures claiming to
-solve this problem. Sure you can prepend to a linked list witout removing or
+However, in various tests I've made, those penalties have been quite small
+compared to the penalties that incur with different data structures claiming to
+solve this problem. Sure you can prepend to a linked list without removing or
 shuffling around elements, but in a dynamic vector you are dealing
-with data that is all laid out sequantially in memory. This is important,
-because modern processors are very fast when the required data can be found in
-cache. In a linked list or other pointer-type list, the cache misses
-from pointer indirection far outweight any other gains in my experience.
+with data that is all laid out sequantially in memory. This is important because modern processors are very fast when the required data can be found in the cache. In a linked list or other pointer-type list, the cache misses
+from pointer indirection far outweigh any other gains in my experience.
 
 ### Design
 
-First let's talk a little about design patterns. We should adopt conventions
+First, let's talk a little about design patterns. We should adopt conventions
 that make our API easy to reason with and practices that make the code safe and
 easy to debug.
 
 1. Allocation and deallocation happen at the same level as the variable
    declaration.
 
-This first pattern aids at avoiding unnecessary allocations leading to increased
+This first pattern helps to avoid unnecessary allocations leading to increased
 performance as well as easier time with leaks. Let's see what it means.
 
 ```c
 
 // This "constructor" returns an allocated pointer to a `t_foo`. But what if
-// well didn't need a pointer, because we use t_foo in the caller's scope only?
+// we didn't need a pointer, because we use t_foo in the caller's scope only?
 t_foo *create_a_foo(int foosize);
 
 // We could just return a `t_foo`, but now the problem is the error condition.
 // You can't return a NULL if something goes wrong.
 t_foo create_a_foo(int foosize);
 
-// This is how we create a `t_foo` without allocating a pointer (if it wasn'tons
-// already allocated) and we can return an integer repesenting some error condition.
+// This is how we create a `t_foo` without allocating a pointer (if it wasn't
+// already allocated) and we can return an integer representing some error condition.
 int create_a_foo(t_foo *foo, int foosize);
 
 // ...or if we want to be passing foo around directly as a parameter to
@@ -76,7 +71,7 @@ t_foo *create_a_foo(t_foo *foo, int foosize);
 
 2. Parameter order is (dst, src, params, fpointers).
 
-We always the destination before the source if a destination pointer or variable
+We always have the destination before the source if a destination pointer or variable
 is applicable.
 
 ```c
@@ -96,13 +91,13 @@ typedef struct s_vec
     uint8_t *memory;    // Pointer to the first byte of allocated memory.
     size_t  elem_size;  // Size of a vector element in bytes.
     size_t  alloc_size; // Total size of allocated bytes.
-    size_t  len;        // Length of the active part of the vector assert
+    size_t  len;        // Length of the used-up part of the vector in
                         // `elem_size` chunks.
 }   t_vec;
 
 ```
 
-When we access elements in the vector our bounds are 0 -> len. We might have
+When we access elements in the vector our bounds are 0 -> len - 1. We might have
 allocated more memory in total, but we will only access memory in the byte-range
 0 -> len * elem_size.
 
@@ -209,7 +204,7 @@ Resizing is used by many functions that we will implement later, so better do it
 now. In the resizing function it's handy to call the `vec_copy` method so we'll
 implement that as well.
 
-The copy function is very simple and will only copy as many bytes as are
+The copy function is very simple and will only copy at most as many bytes as are
 available in the `dst` vector.
 
 ```c
@@ -229,7 +224,7 @@ int main(void)
 
 ```
 
-The resizing function `vec_resize` will take in a `target_size` parameter and either srink
+The resizing function `vec_resize` will take in a `target_size` parameter and either shrink
 (destructively) or grow the vector to the target size copying the old contents
 over to the new alloaction.
 
@@ -288,11 +283,9 @@ int main(void)
 
 When we iterate our vector we usually use iterator functions. It's quite
 surprising how many use cases these few simple functions cover, reducing errors
-and code.
+and boilerplate code.
 
-Simple iterator takes in a function pointer which takes
-in a pointer to an element in the loop. These are the actual elements in the
-vector so any modification will modify the original values.
+A simple iterator takes in a function pointer that is called for each element of the vector, with a pointer to the element passed as an argument. Any modifications to the element will modify the original values.
 
 ```c
 
@@ -313,8 +306,8 @@ int main(void)
 
 ```
 
-A `map` function which copies over the current element (this operation is
-non-destructive), sends the element to `f` and then appends it to a new vector `dst`.
+A `map` function which copies over the current elements (this operation is
+non-destructive), sends each element to `f` and then appends the element to a new vector `dst`.
 
 ```c
 
@@ -359,16 +352,15 @@ void main()
 
 ```
 
-Finally filtering function that iterates the vector and at each iteration
-function `f` get's the `dst` element passed to `vec_reduce` as the first
-parameter and the current element as the second parameter allowing reducing the
-results of the iteration to one element such as in summing a list of integers.
+Finally, a function that iterates the elements of the vector, and at each iteration,
+applies the function `f` that gets the `acc` element passed to `vec_reduce` as the first
+parameter (the "accumulator"), and the current element as the second parameter. With the accumulator, the results of iterating over the elements are reduced to one element such as in summing a list of integers.
 
 ```c
 
-void sum(void *dst, void *src)
+void sum(void *acc, void *elem)
 {
-    *(int *)dst += *(int *)src;
+    *(int *)acc += *(int *)elem;
 }
 
 void main()
@@ -387,9 +379,9 @@ void main()
 
 ## Conclusions
 
-That's a quick overview on how to implement a performant and easy to use
-dynamic data-structure in C. This structure can be used as a fundamental
+That's a quick overview on how to implement a performant and easy-to-use
+dynamic data structure in C. This structure can be used as a fundamental
 building block in many programs. The implementation has been kept simple
-because frankly it doesn't have to be more complicated. New functions
+because frankly, it doesn't have to be more complicated. New functions
 could definitely be added to grow the functionality of `t_vec` even
 further.

@@ -1,8 +1,8 @@
 # Subject: Dynamic Vector
 
-Let's create a dynamic vector data-structure in C.
+Let's create a dynamic vector data structure in C.
 
-To understand more about what we are about to implement check out:
+To understand more about what we are about to implement check out these resources:
 
 https://doc.rust-lang.org/rust-by-example/std/vec.html
 
@@ -24,13 +24,13 @@ typedef struct s_vec
     uint8_t *memory;    // Pointer to the first byte of allocated memory.
     size_t  elem_size;  // Size of a vector element in bytes.
     size_t  alloc_size; // Total size of allocated bytes.
-    size_t  len;        // Length of the active part of the vector assert
+    size_t  len;        // Length of the used-up part of the vector in
                         // `elem_size` chunks.
 }   t_vec;
 
 ```
 
-When we access elements in the vector our bounds are 0 -> len. We might have
+When we access elements in the vector our bounds are 0 -> len - 1. We might have
 allocated more memory in total, but we will only access memory in the byte-range
 0 -> len * elem_size.
 
@@ -79,9 +79,9 @@ void    vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
 
 ## Ex0: vec_new
 
-Create a function `vec_new` which will take a pinter to a `t_vec` and
-allocate len * elem_size amount of bytes in the buffer as well as
-initialize it's length and element size.
+Create a function `vec_new` which will take a pointer to a `t_vec` and
+allocate len * elem_size bytes in the buffer as well as
+initialize its length and element size.
 
 ```c
 
@@ -102,8 +102,8 @@ int main(void)
 
 ## Ex1: vec_free
 
-Create a function `vec_free` which free's the allocated resources
-in `src` and zeroes it's fields.
+Create a function `vec_free` that frees the allocated resources
+in `src` and zeroes its fields.
 
 ```c
 
@@ -146,7 +146,7 @@ int main(void)
 ## Ex3: vec_copy
 
 Create a function `vec_copy`. The copy function is very simple and
-will only copy as many bytes as are available in the `dst` vector.
+will only copy at most as many bytes as are available in the `dst` vector.
 
 ```c
 
@@ -171,8 +171,8 @@ int main(void)
 ## Ex4: vec_resize
 
 Create a function `vec_resize` which will take in a `target_size` parameter and
-either srink (destructively) or grow the vector to the target size copying
-the old contents over to the new alloaction.
+either shrink (destructively) or grow the vector to the target size, copying
+the old contents over to the new allocation.
 
 ```c
 
@@ -480,16 +480,16 @@ int main(void)
 
 Create a function `vec_reduce` which takes as an argument
 a function `f` applied to each element in the vector.
-Function `f` takes `dst` as it's first argument thus
+Function `f` takes `acc` as it's first argument thus
 we can reduce the elements in the vector into one element.
 
 ```c
 
-void vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+void vec_reduce(void *acc, t_vec *src, void (*f) (void *, void *));
 
-void reduce_tester(void *dst, void *src)
+void reduce_tester(void *acc, void *src)
 {
-    *(int *)dst += *(int *)src;
+    *(int *)acc += *(int *)src;
 }
 
 int main(void)

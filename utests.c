@@ -9,7 +9,7 @@ void test_vec_new()
 	assert(vec_new(&t1, 0, 0) == -1);
 	assert(vec_new(&t1, 0, 1) == -1);
 	assert(vec_new(&t1, 1, 0) == -1);
-	assert(vec_new(&t1, 10, 1) == 10);
+	assert(vec_new(&t1, 10, 1) > 0);
 	vec_free(&t1);
 	printf("test_vec_new successful!\n");
 }
@@ -18,7 +18,7 @@ void test_vec_free()
 {
 	t_vec t1;
 
-	assert(vec_new(&t1, 10, 1) == 10);
+	assert(vec_new(&t1, 10, 1) > 0);
 	vec_free(&t1);
 	assert(t1.len == 0);
 	assert(t1.alloc_size == 0);
@@ -59,7 +59,7 @@ void test_vec_resize()
 	int		base[] = {1, 2, 3, 4, 5};
 
 	assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
-	assert(vec_resize(&t1, 100) == 100);
+	assert(vec_resize(&t1, 100) > 0);
 	assert(memcmp(t1.memory, base, sizeof(base)) == 0);
 	vec_free(&t1);
 	printf("test_vec_resize successful!\n");
