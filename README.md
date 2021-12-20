@@ -1,12 +1,15 @@
 # Vec: A Dynamic Vector in C
 
+The `subject.md` file contains exercises for this implementation if you want to
+do it yourself. In that case, don't peek at the solutions in `vec.c` beforehand!
+
 The C-standard library doesn't offer a good dynamic data structure often found
 in other languages such `vector` in C++ or `Vec` in Rust. This is an
 overview of the idea, design and implementation of such data structure in C.
 
 ## Features of a Dynamic Data Structure
 
-When we talk about a dynamic data structure, we usually mean a container with a
+When we talk about a dynamic data structures, we usually mean a container with a
 growing memory buffer. Such a buffer has a certain strategy to allocate more
 memory when the existing memory runs out. A typical strategy is to double the
 size of the buffer each time a limit is reached. This way we minimize the number
@@ -123,7 +126,7 @@ typedef struct s_vec
     size_t          len;
 }   t_vec;
 
-int     vec_new(t_vec *src, size_t len, size_t elem_size);
+int     vec_new(t_vec *src, size_t init_alloc, size_t elem_size);
 void    vec_free(t_vec *src);
 int     vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 int     vec_resize(t_vec *src, size_t target_size);

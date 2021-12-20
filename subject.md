@@ -13,7 +13,29 @@ Correct implementations (but not the only solutions!) can be found
 in `vec.c`. However it's better if you remove that and try yourself
 first!
 
-## Struct
+## Rules
+
+1. You are only allowed to use the following external functions:
+	- malloc
+	- free
+	- memcpy
+	- memmove
+
+2. You are only allowed to use the includes in the header file described in
+"Implementation"
+
+3. You must use the prototypes described in each exercise without modification.
+
+4. You must compile your program with the following flags using either `gcc`
+or `clang` compilers:
+	- Wall
+	- Wextra
+	- Werror
+	- Wpedantic
+	- Wunreachable-code
+	- Wtype-limits
+
+## Implementation
 
 We create a struct called `s_vec` and typedef it to `t_vec`.
 
@@ -22,10 +44,10 @@ We create a struct called `s_vec` and typedef it to `t_vec`.
 typedef struct s_vec
 {
     unsigned char *memory;    // Pointer to the first byte of allocated memory.
-    size_t  elem_size;  // Size of a vector element in bytes.
-    size_t  alloc_size; // Total size of allocated bytes.
-    size_t  len;        // Length of the used-up part of the vector in
-                        // `elem_size` chunks.
+    size_t  elem_size;        // Size of a vector element in bytes.
+    size_t  alloc_size;       // Total size of allocated bytes.
+    size_t  len;              // Length of the used-up part of the vector in
+                              // `elem_size` chunks.
 }   t_vec;
 
 ```
@@ -33,8 +55,6 @@ typedef struct s_vec
 When we access elements in the vector our bounds are 0 -> len - 1. We might have
 allocated more memory in total, but we will only access memory in the byte-range
 0 -> len * elem_size.
-
-## Implementation
 
 Here is our `vec.h` header file with implementation prototypes;
 
@@ -56,7 +76,7 @@ typedef struct s_vec
     size_t          len;
 }   t_vec;
 
-int     vec_new(t_vec *src, size_t len, size_t elem_size);
+int     vec_new(t_vec *src, size_t init_alloc, size_t elem_size);
 void    vec_free(t_vec *src);
 int     vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 int     vec_resize(t_vec *src, size_t target_size);
@@ -115,12 +135,12 @@ int main(void)
 {
     t_vec t1;
 
-    assert(vec_new(&t1, 10, 1) == 10);
-    vec_free(&t1);
-    assert(t1.len == 0);
-    assert(t1.alloc_size == 0);
-    assert(t1.elem_size == 0);
-    assert(t1.memory == NULL);
+    assert(vec_new(&t1, 10, 1) > 0);
+	vec_free(&t1);
+	assert(t1.len == 0);
+	assert(t1.alloc_size == 0);
+	assert(t1.elem_size == 0);
+	assert(t1.memory == NULL);
 }
 
 ```
@@ -161,11 +181,11 @@ int main(void)
     int     base[] = {1, 2, 3, 4, 5};
 
     assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
-    assert(vec_new(&t2, 5, sizeof(int)) > 0);
-    assert(vec_copy(&t2, &t1) > 0);
-    assert(memcmp(t2.memory, base, sizeof(base)) == 0);
-    vec_free(&t1);
-    vec_free(&t2);
+	assert(vec_new(&t2, 5, sizeof(int)) > 0);
+	assert(vec_copy(&t2, &t1) > 0);
+	assert(memcmp(t2.memory, base, sizeof(base)) == 0);
+	vec_free(&t1);
+	vec_free(&t2);
 }
 
 ```
@@ -186,9 +206,9 @@ int main(void)
     int     base[] = {1, 2, 3, 4, 5};
 
     assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
-    assert(vec_resize(&t1, 100) == 100);
-    assert(memcmp(t1.memory, base, sizeof(base)) == 0);
-    vec_free(&t1);
+	assert(vec_resize(&t1, 100) > 0);
+	assert(memcmp(t1.memory, base, sizeof(base)) == 0);
+	vec_free(&t1);
 }
 
 ```
@@ -209,10 +229,10 @@ int main(void)
     int     expect[] = {2, 4};
 
     assert(vec_new(&t1, 1, sizeof(int)) > 0);
-    vec_push(&t1, &base[1]);
-    vec_push(&t1, &base[3]);
-    assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
-    vec_free(&t1);
+	vec_push(&t1, &base[1]);
+	vec_push(&t1, &base[3]);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	vec_free(&t1);
 }
 
 ```
@@ -233,14 +253,14 @@ int main(void)
     int     expect = 0;
 
     assert(vec_new(&t1, 1, sizeof(int)) > 0);
-    vec_push(&t1, &base[1]);
-    vec_push(&t1, &base[3]);
-    vec_pop(&expect, &t1);
-    assert(expect == 4);
-    vec_pop(&expect, &t1);
-    assert(expect == 2);
-    assert(t1.len == 0);
-    vec_free(&t1);
+	vec_push(&t1, &base[1]);
+	vec_push(&t1, &base[3]);
+	vec_pop(&expect, &t1);
+	assert(expect == 4);
+	vec_pop(&expect, &t1);
+	assert(expect == 2);
+	assert(t1.len == 0);
+	vec_free(&t1);
     printf("test_vec_pop successful!\n");
 }
 
@@ -262,14 +282,14 @@ int main(void)
     int     *expect;
 
     assert(vec_new(&t1, 1, sizeof(int)) > 0);
-    vec_push(&t1, &base[1]);
-    vec_push(&t1, &base[3]);
-    expect = vec_get(&t1, 0);
-    assert(*expect == 2);
-    expect = vec_get(&t1, 1);
-    assert(*expect == 4);
-    assert(t1.len == 2);
-    vec_free(&t1);
+	vec_push(&t1, &base[1]);
+	vec_push(&t1, &base[3]);
+	expect = vec_get(&t1, 0);
+	assert(*expect == 2);
+	expect = vec_get(&t1, 1);
+	assert(*expect == 4);
+	assert(t1.len == 2);
+	vec_free(&t1);
 }
 
 ```
@@ -291,11 +311,11 @@ int main(void)
     int     expect[] = {1, 42, 2, 3, 666, 4, 5, 7};
 
     assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
-    vec_insert(&t1, &insert[0], 1);
-    vec_insert(&t1, &insert[1], 4);
-    vec_insert(&t1, &insert[2], 7);
-    assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
-    vec_free(&t1);
+	vec_insert(&t1, &insert[0], 1);
+	vec_insert(&t1, &insert[1], 4);
+	vec_insert(&t1, &insert[2], 7);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	vec_free(&t1);
 }
 
 ```
@@ -316,14 +336,14 @@ int main(void)
     int     insert[] = {42, 666, 7};
 
     assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
-    vec_insert(&t1, &insert[0], 1);
-    vec_insert(&t1, &insert[1], 4);
-    vec_insert(&t1, &insert[2], 7);
-    vec_remove(&t1, 1);
-    vec_remove(&t1, 3);
-    vec_remove(&t1, 5);
-    assert(memcmp(t1.memory, base, sizeof(base)) == 0);
-    vec_free(&t1);
+	vec_insert(&t1, &insert[0], 1);
+	vec_insert(&t1, &insert[1], 4);
+	vec_insert(&t1, &insert[2], 7);
+	vec_remove(&t1, 1);
+	vec_remove(&t1, 3);
+	vec_remove(&t1, 5);
+	assert(memcmp(t1.memory, base, sizeof(base)) == 0);
+	vec_free(&t1);
     printf("test_vec_remove successful!\n");
 }
 
@@ -346,11 +366,11 @@ int main(void)
     int     expect[] = {1, 2, 3, 4, 5, 6};
 
     assert(vec_from(&t1, base1, 3, sizeof(int)) > 0);
-    assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
-    assert(vec_append(&t1, &t2) > 0);
-    assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
-    vec_free(&t1);
-    vec_free(&t2);
+	assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
+	assert(vec_append(&t1, &t2) > 0);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	vec_free(&t1);
+	vec_free(&t2);
     printf("test_vec_append successful!\n");
 }
 
@@ -373,11 +393,11 @@ int main(void)
     int     expect[] = {4, 5, 6, 1, 2, 3};
 
     assert(vec_from(&t1, base1, 3, sizeof(int)) > 0);
-    assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
-    assert(vec_prepend(&t1, &t2) > 0);
-    assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
-    vec_free(&t1);
-    vec_free(&t2);
+	assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
+	assert(vec_prepend(&t1, &t2) > 0);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	vec_free(&t1);
+	vec_free(&t2);
     printf("test_vec_prepend successful!\n");
 }
 
@@ -404,9 +424,9 @@ int main(void)
     int     expect[] = {2, 3, 4, 5, 6};
 
     assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
-    vec_iter(&t1, iter_tester);
-    assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
-    vec_free(&t1);
+	vec_iter(&t1, iter_tester);
+	assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
+	vec_free(&t1);
 }
 
 ```
