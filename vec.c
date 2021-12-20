@@ -317,13 +317,13 @@ static void memswap(unsigned char *a, unsigned char *b, size_t bytes)
 }
 
 static void vec_sort_recurse(t_vec *src,
-    ssize_t low,
-    ssize_t high,
+    long int low,
+    long int high,
     int (*f)(void *, void *))
 {
-    ssize_t pivot;
-    ssize_t a;
-    ssize_t b;
+    long int pivot;
+    long int a;
+    long int b;
 
     if (low >= high)
         return ;
