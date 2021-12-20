@@ -29,9 +29,9 @@ ssize_t	vec_remove(t_vec *src, size_t index);
 ssize_t vec_append(t_vec *dst, t_vec *src);
 ssize_t vec_prepend(t_vec *dst, t_vec *src);
 void	vec_iter(t_vec *src, void (*f) (void *));
-void	vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
-void	vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
-void 	vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+ssize_t	vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
+ssize_t	vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
+ssize_t vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
 void	vec_sort(t_vec *src, int (*f)(void *, void *));
 
 #endif
