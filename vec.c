@@ -65,7 +65,7 @@ int vec_copy(t_vec *dst, t_vec *src)
 int vec_resize(t_vec *src, size_t target_size)
 {
 	t_vec	dst;
-	int	ret;
+	int		ret;
 
 	if (!src)
 		return (-1);
@@ -82,8 +82,8 @@ int vec_resize(t_vec *src, size_t target_size)
 
 int vec_push(t_vec *dst, void *src)
 {
-	uint8_t	*target;
-	int	ret;
+	unsigned char	*target;
+	int				ret;
 
 	if (!dst || !src)
 		return (-1);
@@ -101,7 +101,7 @@ int vec_push(t_vec *dst, void *src)
 
 int vec_pop(void *dst, t_vec *src)
 {
-	uint8_t	*target;
+	unsigned char	*target;
 
 	if (!dst || !src)
 		return (-1);
@@ -115,7 +115,7 @@ int vec_pop(void *dst, t_vec *src)
 
 void *vec_get(t_vec *src, size_t index)
 {
-	uint8_t	*ptr;
+	unsigned char	*ptr;
 
 	if (index > src->len || !src)
 		return (NULL);
@@ -125,9 +125,9 @@ void *vec_get(t_vec *src, size_t index)
 
 int vec_insert(t_vec *dst, void *src, size_t index)
 {
-	uint8_t	*pos;
-	uint8_t	*mov_pos;
-	int	ret;
+	unsigned char	*pos;
+	unsigned char	*mov_pos;
+	int				ret;
 
 	if (!dst || !src || index > dst->len)
 		return (-1);
@@ -149,8 +149,8 @@ int vec_insert(t_vec *dst, void *src, size_t index)
 
 int vec_remove(t_vec *src, size_t index)
 {
-	uint8_t	*pos;
-	uint8_t	*mov_pos;
+	unsigned char	*pos;
+	unsigned char	*mov_pos;
 
 	if (!src || index > src->len)
 		return (-1);
@@ -168,9 +168,9 @@ int vec_remove(t_vec *src, size_t index)
 
 int vec_append(t_vec *dst, t_vec *src)
 {
-	uint8_t	*pos;
-	int	ret;
-	size_t	alloc_size;
+	unsigned char	*pos;
+	int				ret;
+	size_t			alloc_size;
 
 	if (!dst || !src)
 		return (-1);
@@ -192,10 +192,10 @@ int vec_append(t_vec *dst, t_vec *src)
 
 int vec_prepend(t_vec *dst, t_vec *src)
 {
-	uint8_t	*pos;
-	int	ret;
-	t_vec	new;
-	size_t	alloc_size;
+	unsigned char	*pos;
+	int				ret;
+	t_vec			new;
+	size_t			alloc_size;
 
 	if (!dst || !src)
 		return (-1);
@@ -293,7 +293,7 @@ int vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *))
 	return (1);
 }
 
-static void memswap8(uint8_t *a, uint8_t *b)
+static void memswap8(unsigned char *a, unsigned char *b)
 {
 	if (a == b)
 		return ;
@@ -302,7 +302,7 @@ static void memswap8(uint8_t *a, uint8_t *b)
 	*a ^= *b;
 }
 
-static void memswap(uint8_t *a, uint8_t *b, size_t bytes)
+static void memswap(unsigned char *a, unsigned char *b, size_t bytes)
 {
 	size_t	i;
 
