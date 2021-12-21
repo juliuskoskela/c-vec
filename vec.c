@@ -7,14 +7,14 @@ int vec_new(t_vec *dst, size_t init_len, size_t elem_size)
     dst->alloc_size = init_len * elem_size;
     dst->len = 0;
     dst->elem_size = elem_size;
-	if (init_len == 0)
-		dst->memory = NULL;
-	else
-	{
-    	dst->memory = malloc(dst->alloc_size);
-		if (!dst->memory)
-			return (-1);
-	}
+        if (init_len == 0)
+                dst->memory = NULL;
+        else
+        {
+        dst->memory = malloc(dst->alloc_size);
+                if (!dst->memory)
+                        return (-1);
+        }
     return (1);
 }
 
@@ -33,14 +33,14 @@ int vec_from(t_vec *dst, void *src, size_t len, size_t elem_size)
 {
     if (!dst || !src || elem_size == 0)
         return (-1);
-	else if (vec_new(dst, len, elem_size) < 0)
-		return (-1);
-	memcpy(
-		dst->memory,
-		src,
-		dst->alloc_size);
-	dst->len = len;
-	return (1);
+        else if (vec_new(dst, len, elem_size) < 0)
+                return (-1);
+        memcpy(
+                dst->memory,
+                src,
+                dst->alloc_size);
+        dst->len = len;
+        return (1);
 }
 
 int vec_copy(t_vec *dst, t_vec *src)
@@ -49,17 +49,17 @@ int vec_copy(t_vec *dst, t_vec *src)
 
     if (!dst || !src || !src->memory)
         return (-1);
-	else if (!dst->memory)
-		vec_new(dst, src->len, dst->elem_size);
+        else if (!dst->memory)
+                vec_new(dst, src->len, dst->elem_size);
     if (src->len * src->elem_size < dst->alloc_size)
         copy_size = src->len * src->elem_size;
     else
         copy_size = src->alloc_size;
     memcpy(
-		dst->memory,
-		src->memory,
-		copy_size);
-	dst->len = copy_size / dst->elem_size;
+                dst->memory,
+                src->memory,
+                copy_size);
+        dst->len = copy_size / dst->elem_size;
     return (1);
 }
 
@@ -69,14 +69,14 @@ int vec_resize(t_vec *src, size_t target_len)
 
     if (!src)
         return (-1);
-	else if (!src->memory)
-		return vec_new(src, target_len, src->elem_size);
+        else if (!src->memory)
+                return vec_new(src, target_len, src->elem_size);
     else if (vec_new(&dst, target_len, src->elem_size) < 0)
-		return (-1);
+                return (-1);
     memcpy(
-		dst.memory,
-		src->memory,
-		src->len * src->elem_size);
+                dst.memory,
+                src->memory,
+                src->len * src->elem_size);
     dst.len = src->len;
     vec_copy(&dst, src);
     vec_free(src);
@@ -98,8 +98,8 @@ int vec_push(t_vec *dst, void *src)
 {
     if (!dst || !src)
         return (-1);
-	else if (!dst->memory)
-		vec_new(dst, 1, dst->elem_size);
+        else if (!dst->memory)
+                vec_new(dst, 1, dst->elem_size);
     if (dst->elem_size * dst->len >= dst->alloc_size)
         if (vec_resize(dst, (dst->alloc_size * 2) / dst->elem_size) < 0)
             return (-1);
@@ -121,10 +121,10 @@ int vec_pop(void *dst, t_vec *src)
 
 int vec_clear(t_vec *src)
 {
-	if (!src)
-		return (-1);
-	src->len = 0;
-	return (1);
+        if (!src)
+                return (-1);
+        src->len = 0;
+        return (1);
 }
 
 int vec_insert(t_vec *dst, void *src, size_t index)
@@ -137,12 +137,12 @@ int vec_insert(t_vec *dst, void *src, size_t index)
         if (vec_resize(dst, (dst->alloc_size * 2) / dst->elem_size) < 0)
             return (-1);
     memmove(
-		vec_get(dst, index + 1),
-		vec_get(dst, index),
-		(dst->len - index) * dst->elem_size);
+                vec_get(dst, index + 1),
+                vec_get(dst, index),
+                (dst->len - index) * dst->elem_size);
     memcpy(
-		vec_get(dst, index),
-		src, dst->elem_size);
+                vec_get(dst, index),
+                src, dst->elem_size);
     dst->len++;
     return (1);
 }
@@ -157,9 +157,9 @@ int vec_remove(t_vec *src, size_t index)
         return (1);
     }
     memmove(
-		vec_get(src, index),
-		vec_get(src, index + 1),
-		(src->len - index) * src->elem_size);
+                vec_get(src, index),
+                vec_get(src, index + 1),
+                (src->len - index) * src->elem_size);
     src->len--;
     return (1);
 }
@@ -171,8 +171,8 @@ int vec_append(t_vec *dst, t_vec *src)
 
     if (!dst || !src || !src->memory)
         return (-1);
-	else if (!dst->memory)
-		vec_new(dst, 1, dst->elem_size);
+        else if (!dst->memory)
+                vec_new(dst, 1, dst->elem_size);
     alloc_size = dst->len * dst->elem_size + src->len * src->elem_size;
     if (dst->alloc_size < alloc_size)
     {
@@ -184,9 +184,9 @@ int vec_append(t_vec *dst, t_vec *src)
             return (-1);
     }
     memcpy(
-		vec_get(dst, dst->len),
-		src->memory,
-		src->len * src->elem_size);
+                vec_get(dst, dst->len),
+                src->memory,
+                src->len * src->elem_size);
     dst->len += src->len;
     return (1);
 }
@@ -198,17 +198,17 @@ int vec_prepend(t_vec *dst, t_vec *src)
 
     if (!dst || !src)
         return (-1);
-	else if (!dst->memory)
-		vec_new(dst, 1, dst->elem_size);
+        else if (!dst->memory)
+                vec_new(dst, 1, dst->elem_size);
     alloc_size = dst->len * dst->elem_size + src->len * src->elem_size;
     if (vec_new(&new, alloc_size / dst->elem_size, dst->elem_size) < 0)
         return (-1);
     vec_copy(&new, src);
     new.len = src->len + dst->len;
     memcpy(
-		vec_get(&new, src->len),
-		dst->memory,
-		dst->len * dst->elem_size);
+                vec_get(&new, src->len),
+                dst->memory,
+                dst->len * dst->elem_size);
     vec_free(dst);
     *dst = new;
     return (1);
@@ -242,10 +242,10 @@ void *vec_find(t_vec *src, bool (*f) (void *))
     {
         ptr = vec_get(src, i);
         if (f(ptr) == true)
-			return (ptr);
+                        return (ptr);
         i++;
     }
-	return (NULL);
+        return (NULL);
 }
 
 int vec_map(t_vec *dst, t_vec *src, void (*f) (void *))
@@ -256,8 +256,8 @@ int vec_map(t_vec *dst, t_vec *src, void (*f) (void *))
 
     if (!dst || !src || !src->memory)
         return (-1);
-	else if (!dst->memory)
-		vec_new(dst, 1, dst->elem_size);
+        else if (!dst->memory)
+                vec_new(dst, 1, dst->elem_size);
     res = malloc(dst->elem_size);
     if (!res)
         return (-1);
@@ -282,8 +282,8 @@ int vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *))
 
     if (!dst || !src || !src->memory)
         return (-1);
-	else if (!dst->memory)
-		vec_new(dst, 1, dst->elem_size);
+        else if (!dst->memory)
+                vec_new(dst, 1, dst->elem_size);
     res = malloc(dst->elem_size);
     if (!res)
         return (-1);
