@@ -2,12 +2,18 @@
 #include "assert.h"
 #include "stdio.h"
 
+void print_int(void *ptr)
+{
+	printf("%d\n", *(int *)ptr);
+}
+
 void test_vec_new()
 {
 	t_vec t1;
 
 	assert(vec_new(&t1, 0, 0) == -1);
-	assert(vec_new(&t1, 0, 1) == -1);
+	assert(vec_new(&t1, 0, 1) > 0);
+	assert(t1.memory == NULL);
 	assert(vec_new(&t1, 1, 0) == -1);
 	assert(vec_new(&t1, 10, 1) > 0);
 	assert(t1.memory != NULL);
@@ -45,8 +51,8 @@ void test_vec_copy()
 	t_vec	t2;
 	int		base[] = {1, 2, 3, 4, 5};
 
-	assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
-	assert(vec_new(&t2, 5, sizeof(int)) > 0);
+	assert(vec_from(&t1, base, sizeof(base) / sizeof(int), sizeof(int)) > 0);
+	assert(vec_new(&t2, sizeof(base) / sizeof(int), sizeof(int)) > 0);
 	assert(vec_copy(&t2, &t1) > 0);
 	assert(memcmp(t2.memory, base, sizeof(base)) == 0);
 	vec_free(&t1);
