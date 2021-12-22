@@ -59,7 +59,7 @@ int vec_copy(t_vec *dst, t_vec *src)
         dst->memory,
         src->memory,
         copy_size);
-        dst->len = copy_size / dst->elem_size;
+	dst->len = copy_size / dst->elem_size;
     return (1);
 }
 
@@ -78,7 +78,6 @@ int vec_resize(t_vec *src, size_t target_len)
         src->memory,
         src->len * src->elem_size);
     dst.len = src->len;
-    vec_copy(&dst, src);
     vec_free(src);
     *src = dst;
     return (1);
@@ -101,7 +100,7 @@ int vec_push(t_vec *dst, void *src)
     else if (!dst->memory)
         vec_new(dst, 1, dst->elem_size);
     if (dst->elem_size * dst->len >= dst->alloc_size)
-        if (vec_resize(dst, (dst->alloc_size * 2) / dst->elem_size) < 0)
+        if (vec_resize(dst, dst->len * 2) < 0)
             return (-1);
     memcpy(&dst->memory[dst->elem_size * dst->len], src, dst->elem_size);
     dst->len++;
