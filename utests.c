@@ -118,6 +118,7 @@ void test_vec_get()
 	expect = vec_get(&t1, 1);
 	assert(*expect == 4);
 	assert(t1.len == 2);
+	assert(vec_get(&t1, 2) == NULL);
 	vec_free(&t1);
 	printf("test_vec_get successful!\n");
 }

@@ -88,7 +88,7 @@ void *vec_get(t_vec *src, size_t index)
 {
     unsigned char   *ptr;
 
-    if (index > src->len || !src || !src->memory)
+    if (index >= src->len || !src || !src->memory)
         return (NULL);
     ptr = &src->memory[src->elem_size * index];
     return (ptr);
@@ -103,7 +103,7 @@ int vec_push(t_vec *dst, void *src)
     if (dst->elem_size * dst->len >= dst->alloc_size)
         if (vec_resize(dst, (dst->alloc_size * 2) / dst->elem_size) < 0)
             return (-1);
-    memcpy(vec_get(dst, dst->len), src, dst->elem_size);
+    memcpy(&dst->memory[dst->elem_size * dst->len], src, dst->elem_size);
     dst->len++;
     return (1);
 }
@@ -158,7 +158,7 @@ int vec_remove(t_vec *src, size_t index)
     }
     memmove(
                 vec_get(src, index),
-                vec_get(src, index + 1),
+                &src->memory[src->elem_size * (index + 1)],
                 (src->len - index) * src->elem_size);
     src->len--;
     return (1);
@@ -184,9 +184,9 @@ int vec_append(t_vec *dst, t_vec *src)
             return (-1);
     }
     memcpy(
-                vec_get(dst, dst->len),
-                src->memory,
-                src->len * src->elem_size);
+        &dst->memory[dst->elem_size * dst->len],
+        src->memory,
+        src->len * src->elem_size);
     dst->len += src->len;
     return (1);
 }
@@ -206,9 +206,9 @@ int vec_prepend(t_vec *dst, t_vec *src)
     vec_copy(&new, src);
     new.len = src->len + dst->len;
     memcpy(
-                vec_get(&new, src->len),
-                dst->memory,
-                dst->len * dst->elem_size);
+        &new.memory[dst->elem_size * dst->len],
+        dst->memory,
+        dst->len * dst->elem_size);
     vec_free(dst);
     *dst = new;
     return (1);
