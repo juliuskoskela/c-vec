@@ -112,14 +112,16 @@ int vec_new(t_vec *dst, size_t init_len, size_t elem_size);
 
 int main(void)
 {
-    t_vec t1;
+	t_vec t1;
 
-    assert(vec_new(&t1, 0, 0) == -1);
-    assert(vec_new(&t1, 0, 1) == -1);
-    assert(vec_new(&t1, 1, 0) == -1);
-    assert(vec_new(&t1, 10, 1) == 10);
-    assert(t1.memory != NULL);
-    vec_free(&t1);
+	assert(vec_new(&t1, 0, 0) == -1);
+	assert(vec_new(&t1, 0, 1) > 0);
+	assert(t1.memory == NULL);
+	assert(vec_new(&t1, 1, 0) == -1);
+	assert(vec_new(&t1, 10, 1) > 0);
+	assert(t1.memory != NULL);
+	vec_free(&t1);
+	printf("test_vec_new successful!\n");
 }
 
 ```
