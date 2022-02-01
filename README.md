@@ -128,7 +128,7 @@ typedef struct s_vec
 
 int     vec_new(t_vec *src, size_t init_len, size_t elem_size);
 void    vec_free(t_vec *src);
-int     vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int     vec_new_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 int     vec_resize(t_vec *src, size_t target_size);
 int     vec_clear(t_vec *src);
 int     vec_push(t_vec *src, void *elem);
@@ -196,7 +196,7 @@ int main(void)
     t_vec   v;
     int ret;
 
-    ret = vec_from(&v, vals, 3, sizeof(int));
+    ret = vec_new_from(&v, vals, 3, sizeof(int));
     if (ret < 0)
         printf("Error!");
     vec_free(&v);
@@ -221,7 +221,7 @@ int main(void)
     t_vec   v;
     t_vec   d;
 
-    vec_from(&v, vals, 3, sizeof(int));
+    vec_new_from(&v, vals, 3, sizeof(int));
     vec_new(&v, 3, sizeof(int));
     vec_copy(&d, &v);
     vec_free(&v);
@@ -257,7 +257,7 @@ int main(void)
     int     *ptr;
     t_vec   v;
 
-    vec_from(&v, vals, 3, sizeof(int));
+    vec_new_from(&v, vals, 3, sizeof(int));
     vec_push(&v, &vals[0]);
     vec_push(&v, &vals[1]);
     vec_pop(&ret, &v);
@@ -277,7 +277,7 @@ int main(void)
     int     vals[] = {1, 2, 3};
     t_vec   v;
 
-    vec_from(&v, vals, 3, sizeof(int));
+    vec_new_from(&v, vals, 3, sizeof(int));
     vec_insert(&v, &vals[0], 2);
     vec_remove(&v, 2);
     vec_free(&t1);
@@ -305,7 +305,7 @@ int main(void)
     t_vec   t1;
     int     base[] = {1, 2, 3, 4, 5};
 
-    vec_from(&t1, base, 5, sizeof(int);
+    vec_new_from(&t1, base, 5, sizeof(int);
     vec_iter(&t1, print_int);
     vec_free(&t1);
 }
@@ -375,7 +375,7 @@ void main()
     int     base[] = {1, 2, 3, 4, 5};
     int     result = 0;
 
-    vec_from(&t1, base, 5, sizeof(int));
+    vec_new_from(&t1, base, 5, sizeof(int));
     vec_reduce(&result, &t1, reduce_tester);
     assert(result == 15);
     vec_free(&t1);

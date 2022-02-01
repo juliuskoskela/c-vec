@@ -17,6 +17,7 @@ first!
 
 1. You are only allowed to use the following external functions:
     - malloc
+	- realloc
     - free
     - memcpy
     - memmove
@@ -78,7 +79,7 @@ typedef struct s_vec
 
 int		vec_new(t_vec *src, size_t init_len, size_t elem_size);
 void	vec_free(t_vec *src);
-int		vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int		vec_new_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 int		vec_resize(t_vec *src, size_t target_size);
 int		vec_clear(t_vec *src);
 int	 	vec_push(t_vec *src, void *elem);
@@ -148,21 +149,21 @@ int main(void)
 }
 
 ```
-## Ex2: vec_from
+## Ex2: vec_new_from
 
-Create a function `vec_from` which takes in a pointer to some memory,
+Create a function `vec_new_from` which takes in a pointer to some memory,
 which then will be copied over to the new vector.
 
 ```c
 
-int vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int vec_new_from(t_vec *dst, void *src, size_t len, size_t elem_size);
 
 int main(void)
 {
     t_vec   t1;
     int     base[] = {1, 2, 3, 4, 5};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     assert(memcmp(t1.memory, base, sizeof(base)) == 0);
     vec_free(&t1);
 }
@@ -184,7 +185,7 @@ int main(void)
     t_vec   t2;
     int     base[] = {1, 2, 3, 4, 5};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     assert(vec_new(&t2, 5, sizeof(int)) > 0);
     assert(vec_copy(&t2, &t1) > 0);
     assert(memcmp(t2.memory, base, sizeof(base)) == 0);
@@ -209,7 +210,7 @@ int main(void)
     t_vec   t1;
     int     base[] = {1, 2, 3, 4, 5};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     assert(vec_resize(&t1, 100) > 0);
     assert(memcmp(t1.memory, base, sizeof(base)) == 0);
     vec_free(&t1);
@@ -314,7 +315,7 @@ int main(void)
     int     insert[] = {42, 666, 7};
     int     expect[] = {1, 42, 2, 3, 666, 4, 5, 7};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     vec_insert(&t1, &insert[0], 1);
     vec_insert(&t1, &insert[1], 4);
     vec_insert(&t1, &insert[2], 7);
@@ -339,7 +340,7 @@ int main(void)
     int     base[] = {1, 2, 3, 4, 5};
     int     insert[] = {42, 666, 7};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     vec_insert(&t1, &insert[0], 1);
     vec_insert(&t1, &insert[1], 4);
     vec_insert(&t1, &insert[2], 7);
@@ -369,8 +370,8 @@ int main(void)
     int     base2[] = {4, 5, 6};
     int     expect[] = {1, 2, 3, 4, 5, 6};
 
-    assert(vec_from(&t1, base1, 3, sizeof(int)) > 0);
-    assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base1, 3, sizeof(int)) > 0);
+    assert(vec_new_from(&t2, base2, 3, sizeof(int)) > 0);
     assert(vec_append(&t1, &t2) > 0);
     assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
@@ -396,8 +397,8 @@ int main(void)
     int     base2[] = {4, 5, 6};
     int     expect[] = {4, 5, 6, 1, 2, 3};
 
-    assert(vec_from(&t1, base1, 3, sizeof(int)) > 0);
-    assert(vec_from(&t2, base2, 3, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base1, 3, sizeof(int)) > 0);
+    assert(vec_new_from(&t2, base2, 3, sizeof(int)) > 0);
     assert(vec_prepend(&t1, &t2) > 0);
     assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
@@ -427,7 +428,7 @@ int main(void)
     int     base[] = {1, 2, 3, 4, 5};
     int     expect[] = {2, 3, 4, 5, 6};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     vec_iter(&t1, iter_tester);
     assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
@@ -457,7 +458,7 @@ int main(void)
     int     base[] = {1, 2, 3, 4, 5};
     int     expect[] = {2, 3, 4, 5, 6};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     assert(vec_new(&t2, 5, sizeof(int)) > 0);
     vec_map(&t2, &t1, map_tester);
     assert(memcmp(t2.memory, expect, sizeof(expect)) == 0);
@@ -492,7 +493,7 @@ int main(void)
     int     base[] = {1, 2, 3, 4, 5};
     int     expect[] = {2, 4};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     assert(vec_new(&t2, 5, sizeof(int)) > 0);
     vec_filter(&t2, &t1, filter_tester);
     assert(memcmp(t2.memory, expect, sizeof(expect)) == 0);
@@ -524,7 +525,7 @@ int main(void)
     int     base[] = {1, 2, 3, 4, 5};
     int     result = 0;
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     vec_reduce(&result, &t1, reduce_tester);
     assert(result == 15);
     vec_free(&t1);
@@ -554,7 +555,7 @@ int main(void)
     int     base[] = {3, 2, 2, 7, 4};
     int     expect[] = {2, 2, 3, 4, 7};
 
-    assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
+    assert(vec_new_from(&t1, base, 5, sizeof(int)) > 0);
     vec_sort(&t1, cmp);
     assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
     printf("test_vec_sort successful!\n");

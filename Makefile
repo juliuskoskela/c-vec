@@ -7,7 +7,7 @@
 NAME		=	libvec.a
 UTESTS		=	utests
 CC			=	clang
-CFLAGS 		=	-O3
+CFLAGS 		=	-g
 WFLAGS		=	-Wall -Wextra -Werror -Wunreachable-code -Wpedantic -Wtype-limits
 COMPILE		=	$(CC) $(CFLAGS) $(WFLAGS)
 
