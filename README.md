@@ -317,19 +317,21 @@ non-destructive), sends each element to `f` and then appends the element to a ne
 
 ```c
 
-void *add_one(void *ptr)
+void *add_one(void *src)
 {
     *(int *)src += 1;
 }
 
-void main()
+int main()
 {
     t_vec values;
+    t_vec mapped_values;
 
     vec_new(&values, 10, sizeof(int));
+    vec_new(&mapped_values, 0, sizeof(int));
     for (int i = 0; i < 10; i++)
         vec_push(&values, &i);
-    vec_map(&even, &values, add_one);
+    vec_map(&mapped_values, &values, add_one);
 }
 
 ```
@@ -346,11 +348,13 @@ bool filter_even(void *src)
     return (false);
 }
 
-void main()
+int main()
 {
     t_vec values;
+    t_vec even;
 
     vec_new(&values, 10, sizeof(int));
+    vec_new(&even, 0, sizeof(int));
     for (int i = 0; i < 10; i++)
         vec_push(&values, &i);
     vec_filter(&even, &values, filter_even);
@@ -369,7 +373,7 @@ void sum(void *acc, void *elem)
     *(int *)acc += *(int *)elem;
 }
 
-void main()
+int main()
 {
     t_vec   t1;
     int     base[] = {1, 2, 3, 4, 5};
