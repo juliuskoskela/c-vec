@@ -289,6 +289,27 @@ void test_vec_sort()
 	vec_free(&t1);
 }
 
+void test_vec_strings()
+{
+	t_vec	strings;
+	char *str1 = strdup("Hello");
+	char *str2 = strdup("World");
+	vec_new(&strings, 10, sizeof(char *));
+	vec_push(&strings, &str1);
+	vec_push(&strings, &str2);
+	char *hello = *(char **)vec_get(&strings, 0);
+	char *world = *(char **)vec_get(&strings, 1);
+	assert(strcmp(hello, "Hello") == 0);
+	assert(strcmp(world, "World") == 0);
+	for (size_t i = 0; i < strings.len; i++)
+	{
+		char *str = *(char **)vec_get(&strings, i);
+		free(str);
+	}
+	vec_free(&strings);
+	printf("test_vec_strings successful!\n");
+}
+
 int main(void)
 {
 	test_vec_new();
@@ -308,4 +329,5 @@ int main(void)
 	test_vec_filter();
 	test_vec_reduce();
 	test_vec_sort();
+	test_vec_strings();
 }
