@@ -76,25 +76,25 @@ typedef struct s_vec
     size_t          len;
 }   t_vec;
 
-int		vec_new(t_vec *src, size_t init_len, size_t elem_size);
-void	vec_free(t_vec *src);
-int		vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
-int		vec_resize(t_vec *src, size_t target_len);
-int		vec_clear(t_vec *src);
-int	 	vec_push(t_vec *src, void *elem);
-int	 	vec_pop(void *dst, t_vec *src);
-int	 	vec_copy(t_vec *dst, t_vec *src);
-void	*vec_get(t_vec *src, size_t index);
-int		vec_insert(t_vec *dst, void *elem, size_t index);
-int		vec_remove(t_vec *src, size_t index);
-int	 	vec_append(t_vec *dst, t_vec *src);
-int	 	vec_prepend(t_vec *dst, t_vec *src);
-void	vec_iter(t_vec *src, void (*f) (void *));
-void	*vec_find(t_vec *src, bool (*f) (void *));
-int		vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
-int		vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
-int	 	vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
-void	vec_sort(t_vec *src, int (*f)(void *, void *));
+int     vec_new(t_vec *src, size_t init_len, size_t elem_size);
+void    vec_free(t_vec *src);
+int     vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int     vec_resize(t_vec *src, size_t target_len);
+int     vec_clear(t_vec *src);
+int     vec_push(t_vec *src, void *elem);
+int     vec_pop(void *dst, t_vec *src);
+int     vec_copy(t_vec *dst, t_vec *src);
+void    *vec_get(t_vec *src, size_t index);
+int     vec_insert(t_vec *dst, void *elem, size_t index);
+int     vec_remove(t_vec *src, size_t index);
+int     vec_append(t_vec *dst, t_vec *src);
+int     vec_prepend(t_vec *dst, t_vec *src);
+void    vec_iter(t_vec *src, void (*f) (void *));
+void    *vec_find(t_vec *src, bool (*f) (void *));
+int     vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
+int     vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
+int     vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+void    vec_sort(t_vec *src, int (*f)(void *, void *));
 
 #endif
 
@@ -112,16 +112,16 @@ int vec_new(t_vec *dst, size_t init_len, size_t elem_size);
 
 int main(void)
 {
-	t_vec t1;
+    t_vec t1;
 
-	assert(vec_new(&t1, 0, 0) == -1);
-	assert(vec_new(&t1, 0, 1) > 0);
-	assert(t1.memory == NULL);
-	assert(vec_new(&t1, 1, 0) == -1);
-	assert(vec_new(&t1, 10, 1) > 0);
-	assert(t1.memory != NULL);
-	vec_free(&t1);
-	printf("test_vec_new successful!\n");
+    assert(vec_new(&t1, 0, 0) == -1);
+    assert(vec_new(&t1, 0, 1) > 0);
+    assert(t1.memory == NULL);
+    assert(vec_new(&t1, 1, 0) == -1);
+    assert(vec_new(&t1, 10, 1) > 0);
+    assert(t1.memory != NULL);
+    vec_free(&t1);
+    printf("test_vec_new successful!\n");
 }
 
 ```
@@ -145,7 +145,7 @@ int main(void)
     assert(t1.alloc_size == 0);
     assert(t1.elem_size == 0);
     assert(t1.memory == NULL);
-	printf("test_vec_free successful!\n");
+    printf("test_vec_free successful!\n");
 }
 
 ```
@@ -166,7 +166,7 @@ int main(void)
     assert(vec_from(&t1, base, 5, sizeof(int)) > 0);
     assert(memcmp(t1.memory, base, sizeof(base)) == 0);
     vec_free(&t1);
-	printf("test_vec_from successful!\n");
+    printf("test_vec_from successful!\n");
 }
 
 ```
@@ -192,7 +192,7 @@ int main(void)
     assert(memcmp(t2.memory, base, sizeof(base)) == 0);
     vec_free(&t1);
     vec_free(&t2);
-	printf("test_vec_copy successful!\n");
+    printf("test_vec_copy successful!\n");
 }
 
 ```
@@ -216,7 +216,7 @@ int main(void)
     assert(vec_resize(&t1, 100) > 0);
     assert(memcmp(t1.memory, base, sizeof(base)) == 0);
     vec_free(&t1);
-	printf("test_vec_resize successful!\n");
+    printf("test_vec_resize successful!\n");
 }
 
 ```
@@ -241,7 +241,7 @@ int main(void)
     vec_push(&t1, &base[3]);
     assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
-	printf("test_vec_push successful!\n");
+    printf("test_vec_push successful!\n");
 }
 
 ```
@@ -299,7 +299,7 @@ int main(void)
     assert(*expect == 4);
     assert(t1.len == 2);
     vec_free(&t1);
-	printf("test_vec_get successful!\n");
+    printf("test_vec_get successful!\n");
 }
 
 ```
@@ -326,7 +326,7 @@ int main(void)
     vec_insert(&t1, &insert[2], 7);
     assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
-	printf("test_vec_insert successful!\n");
+    printf("test_vec_insert successful!\n");
 }
 
 ```
@@ -438,7 +438,7 @@ int main(void)
     vec_iter(&t1, iter_tester);
     assert(memcmp(t1.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
-	printf("test_vec_iter successful!\n");
+    printf("test_vec_iter successful!\n");
 }
 
 ```
@@ -471,7 +471,7 @@ int main(void)
     assert(memcmp(t2.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
     vec_free(&t2);
-	printf("test_vec_map successful!\n");
+    printf("test_vec_map successful!\n");
 }
 
 ```
@@ -507,7 +507,7 @@ int main(void)
     assert(memcmp(t2.memory, expect, sizeof(expect)) == 0);
     vec_free(&t1);
     vec_free(&t2);
-	printf("test_vec_filter successful!\n");
+    printf("test_vec_filter successful!\n");
 }
 
 ```

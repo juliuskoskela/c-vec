@@ -91,12 +91,12 @@ We create a struct called `s_vec` and typedef it to `t_vec`.
 
 typedef struct s_vec
 {
-    unsigned char *memory;    // Pointer to the first byte of allocated memory.
-    size_t  elem_size;  // Size of a vector element in bytes.
-    size_t  alloc_size; // Total size of allocated bytes.
-    size_t  len;        // Length of the used-up part of the vector in
-                        // `elem_size` chunks.
-}   t_vec;
+	unsigned char *memory;	  // Pointer to the first byte of allocated memory.
+	size_t	elem_size;	// Size of a vector element in bytes.
+	size_t	alloc_size; // Total size of allocated bytes.
+	size_t	len;		// Length of the used-up part of the vector in
+						// `elem_size` chunks.
+}	t_vec;
 
 ```
 
@@ -120,31 +120,31 @@ Here is our `vec.h` header file with implementation prototypes;
 
 typedef struct s_vec
 {
-    unsigned char   *memory;
-    size_t          elem_size;
-    size_t          alloc_size;
-    size_t          len;
-}   t_vec;
+	unsigned char	*memory;
+	size_t			elem_size;
+	size_t			alloc_size;
+	size_t			len;
+}	t_vec;
 
-int     vec_new(t_vec *src, size_t init_len, size_t elem_size);
-void    vec_free(t_vec *src);
-int     vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
-int     vec_resize(t_vec *src, size_t target_len);
-int     vec_clear(t_vec *src);
-int     vec_push(t_vec *src, void *elem);
-int     vec_pop(void *dst, t_vec *src);
-int     vec_copy(t_vec *dst, t_vec *src);
-void    *vec_get(t_vec *src, size_t index);
-int     vec_insert(t_vec *dst, void *elem, size_t index);
-int     vec_remove(t_vec *src, size_t index);
-int     vec_append(t_vec *dst, t_vec *src);
-int     vec_prepend(t_vec *dst, t_vec *src);
-void    vec_iter(t_vec *src, void (*f) (void *));
-void    *vec_find(t_vec *src, bool (*f) (void *));
-int     vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
-int     vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
-int     vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
-void    vec_sort(t_vec *src, int (*f)(void *, void *));
+int		vec_new(t_vec *src, size_t init_len, size_t elem_size);
+void	vec_free(t_vec *src);
+int		vec_from(t_vec *dst, void *src, size_t len, size_t elem_size);
+int		vec_resize(t_vec *src, size_t target_len);
+int		vec_clear(t_vec *src);
+int		vec_push(t_vec *src, void *elem);
+int		vec_pop(void *dst, t_vec *src);
+int		vec_copy(t_vec *dst, t_vec *src);
+void	*vec_get(t_vec *src, size_t index);
+int		vec_insert(t_vec *dst, void *elem, size_t index);
+int		vec_remove(t_vec *src, size_t index);
+int		vec_append(t_vec *dst, t_vec *src);
+int		vec_prepend(t_vec *dst, t_vec *src);
+void	vec_iter(t_vec *src, void (*f) (void *));
+void	*vec_find(t_vec *src, bool (*f) (void *));
+int		vec_map(t_vec *dst, t_vec *src, void (*f) (void *));
+int		vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
+int		vec_reduce(void *dst, t_vec *src, void (*f) (void *, void *));
+void	vec_sort(t_vec *src, int (*f)(void *, void *));
 
 #endif
 
@@ -159,12 +159,12 @@ allocate len * elem_size amount of bytes in the buffer.
 
 int main(void)
 {
-    t_vec   v;
-    int ret;
+	t_vec	v;
+	int ret;
 
-    ret = vec_new(&v, 10, sizeof(int));
-    if (ret < 0)
-        printf("Error!");
+	ret = vec_new(&v, 10, sizeof(int));
+	if (ret < 0)
+		printf("Error!");
 }
 
 ```
@@ -175,13 +175,13 @@ Deallocation:
 
 int main(void)
 {
-    t_vec   v;
-    int ret;
+	t_vec	v;
+	int ret;
 
-    ret = vec_new(&v, 10, sizeof(int));
-    if (ret < 0)
-        printf("Error!");
-    vec_free(&v);
+	ret = vec_new(&v, 10, sizeof(int));
+	if (ret < 0)
+		printf("Error!");
+	vec_free(&v);
 }
 
 ```
@@ -192,14 +192,14 @@ A handy `from` method that creates a vec out data passed in as a pointer.
 
 int main(void)
 {
-    int     vals[] = {1, 2, 3};
-    t_vec   v;
-    int ret;
+	int		vals[] = {1, 2, 3};
+	t_vec	v;
+	int ret;
 
-    ret = vec_from(&v, vals, 3, sizeof(int));
-    if (ret < 0)
-        printf("Error!");
-    vec_free(&v);
+	ret = vec_from(&v, vals, 3, sizeof(int));
+	if (ret < 0)
+		printf("Error!");
+	vec_free(&v);
 }
 
 ```
@@ -217,15 +217,15 @@ available in the `dst` vector.
 
 int main(void)
 {
-    int     vals[] = {1, 2, 3};
-    t_vec   v;
-    t_vec   d;
+	int		vals[] = {1, 2, 3};
+	t_vec	v;
+	t_vec	d;
 
-    vec_from(&v, vals, 3, sizeof(int));
-    vec_new(&v, 3, sizeof(int));
-    vec_copy(&d, &v);
-    vec_free(&v);
-    vec_free(&d);
+	vec_from(&v, vals, 3, sizeof(int));
+	vec_new(&v, 3, sizeof(int));
+	vec_copy(&d, &v);
+	vec_free(&v);
+	vec_free(&d);
 }
 
 ```
@@ -252,17 +252,17 @@ operations to perform.
 
 int main(void)
 {
-    int     vals[] = {1, 2, 3};
-    int     ret;
-    int     *ptr;
-    t_vec   v;
+	int		vals[] = {1, 2, 3};
+	int		ret;
+	int		*ptr;
+	t_vec	v;
 
-    vec_from(&v, vals, 3, sizeof(int));
-    vec_push(&v, &vals[0]);
-    vec_push(&v, &vals[1]);
-    vec_pop(&ret, &v);
-    ptr = vec_get(&v, 0);
-    vec_free(&v);
+	vec_from(&v, vals, 3, sizeof(int));
+	vec_push(&v, &vals[0]);
+	vec_push(&v, &vals[1]);
+	vec_pop(&ret, &v);
+	ptr = vec_get(&v, 0);
+	vec_free(&v);
 }
 
 ```
@@ -274,13 +274,13 @@ index in the vector.
 
 int main(void)
 {
-    int     vals[] = {1, 2, 3};
-    t_vec   v;
+	int		vals[] = {1, 2, 3};
+	t_vec	v;
 
-    vec_from(&v, vals, 3, sizeof(int));
-    vec_insert(&v, &vals[0], 2);
-    vec_remove(&v, 2);
-    vec_free(&t1);
+	vec_from(&v, vals, 3, sizeof(int));
+	vec_insert(&v, &vals[0], 2);
+	vec_remove(&v, 2);
+	vec_free(&t1);
 }
 
 ```
@@ -297,17 +297,17 @@ A simple iterator takes in a function pointer that is called for each element of
 
 void print_int(void *src)
 {
-    printf("%d\n", *(int *)src);
+	printf("%d\n", *(int *)src);
 }
 
 int main(void)
 {
-    t_vec   t1;
-    int     base[] = {1, 2, 3, 4, 5};
+	t_vec	t1;
+	int		base[] = {1, 2, 3, 4, 5};
 
-    vec_from(&t1, base, 5, sizeof(int);
-    vec_iter(&t1, print_int);
-    vec_free(&t1);
+	vec_from(&t1, base, 5, sizeof(int);
+	vec_iter(&t1, print_int);
+	vec_free(&t1);
 }
 
 ```
@@ -319,19 +319,19 @@ non-destructive), sends each element to `f` and then appends the element to a ne
 
 void *add_one(void *src)
 {
-    *(int *)src += 1;
+	*(int *)src += 1;
 }
 
 int main()
 {
-    t_vec values;
-    t_vec mapped_values;
+	t_vec values;
+	t_vec mapped_values;
 
-    vec_new(&values, 10, sizeof(int));
-    vec_new(&mapped_values, 0, sizeof(int));
-    for (int i = 0; i < 10; i++)
-        vec_push(&values, &i);
-    vec_map(&mapped_values, &values, add_one);
+	vec_new(&values, 10, sizeof(int));
+	vec_new(&mapped_values, 0, sizeof(int));
+	for (int i = 0; i < 10; i++)
+		vec_push(&values, &i);
+	vec_map(&mapped_values, &values, add_one);
 }
 
 ```
@@ -343,21 +343,21 @@ indicating if the element should be added to the resulting vector.
 
 bool filter_even(void *src)
 {
-    if (*(int *)src % 2 == 0)
-        return (true);
-    return (false);
+	if (*(int *)src % 2 == 0)
+		return (true);
+	return (false);
 }
 
 int main()
 {
-    t_vec values;
-    t_vec even;
+	t_vec values;
+	t_vec even;
 
-    vec_new(&values, 10, sizeof(int));
-    vec_new(&even, 0, sizeof(int));
-    for (int i = 0; i < 10; i++)
-        vec_push(&values, &i);
-    vec_filter(&even, &values, filter_even);
+	vec_new(&values, 10, sizeof(int));
+	vec_new(&even, 0, sizeof(int));
+	for (int i = 0; i < 10; i++)
+		vec_push(&values, &i);
+	vec_filter(&even, &values, filter_even);
 }
 
 ```
@@ -370,19 +370,19 @@ parameter (the "accumulator"), and the current element as the second parameter. 
 
 void sum(void *acc, void *elem)
 {
-    *(int *)acc += *(int *)elem;
+	*(int *)acc += *(int *)elem;
 }
 
 int main()
 {
-    t_vec   t1;
-    int     base[] = {1, 2, 3, 4, 5};
-    int     result = 0;
+	t_vec	t1;
+	int		base[] = {1, 2, 3, 4, 5};
+	int		result = 0;
 
-    vec_from(&t1, base, 5, sizeof(int));
-    vec_reduce(&result, &t1, reduce_tester);
-    assert(result == 15);
-    vec_free(&t1);
+	vec_from(&t1, base, 5, sizeof(int));
+	vec_reduce(&result, &t1, reduce_tester);
+	assert(result == 15);
+	vec_free(&t1);
 }
 
 ```
