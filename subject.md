@@ -485,7 +485,7 @@ returned from `f`.
 
 ```c
 
-void vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
+int  vec_filter(t_vec *dst, t_vec *src, bool (*f) (void *));
 
 bool filter_tester(void *src)
 {
@@ -521,7 +521,7 @@ we can reduce the elements in the vector into one element.
 
 ```c
 
-void vec_reduce(void *acc, t_vec *src, void (*f) (void *, void *));
+int vec_reduce(void *acc, t_vec *src, void (*f) (void *, void *));
 
 void reduce_tester(void *acc, void *src)
 {
