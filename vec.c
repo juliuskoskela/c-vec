@@ -136,7 +136,7 @@ int vec_insert(t_vec *dst, void *src, size_t index)
 		if (vec_resize(dst, (dst->alloc_size * 2) / dst->elem_size) < 0)
 			return (-1);
 	memmove(
-		vec_get(dst, index + 1),
+		vec_get(dst, index) + dst->elem_size,
 		vec_get(dst, index),
 		(dst->len - index) * dst->elem_size);
 	memcpy(
