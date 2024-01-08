@@ -50,11 +50,12 @@ int vec_copy(t_vec *dst, t_vec *src)
 	if (!dst || !src || !src->memory)
 		return (-1);
 	else if (!dst->memory)
-		vec_new(dst, src->len, dst->elem_size);
+		if (vec_new(dst, src->len, src->elem_size) < 0)
+			return (-1);
 	if (src->len * src->elem_size < dst->alloc_size)
 		copy_size = src->len * src->elem_size;
 	else
-		copy_size = src->alloc_size;
+		copy_size = dst->alloc_size;
 	memcpy(
 		dst->memory,
 		src->memory,
