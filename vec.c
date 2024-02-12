@@ -205,7 +205,7 @@ int vec_prepend(t_vec *dst, t_vec *src)
 	vec_copy(&new, src);
 	new.len = src->len + dst->len;
 	memcpy(
-		&new.memory[dst->elem_size * dst->len],
+		&new.memory[src->elem_size * src->len],
 		dst->memory,
 		dst->len * dst->elem_size);
 	vec_free(dst);
